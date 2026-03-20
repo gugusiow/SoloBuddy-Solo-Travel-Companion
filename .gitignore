@@ -3,11 +3,11 @@
 # dependencies
 node_modules/
 
-# we're testing the tests, we can drop various sources here!
-src*
-
 #emacs backup
 *~
+
+#env files
+.env 
 
 # Expo
 .expo/

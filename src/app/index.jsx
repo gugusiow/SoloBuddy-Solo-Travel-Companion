@@ -1,5 +1,7 @@
 // entry page
-import { Text } from "react-native"
-  
-// TODO pass reactive model down to presenters
-export default function IndexPage() { return <Text>Hello React Native!</Text> }
+import { model } from "/src/model.js"
+import HomePresenter from "/src/presenters/homePresenter.jsx"
+
+export default function IndexPage() {
+    return <HomePresenter model={model} />
+}

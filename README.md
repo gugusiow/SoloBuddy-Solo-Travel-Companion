@@ -1,10 +1,52 @@
-# Project Repo 
+# Travel Safety Companion
 
-This repo is for you project, you and you project collegues should have access to it. If not write to the Head TA 
+A mobile app for exploring attractions and staying safe while travelling.
 
-## Necessary files
-Depending on the course you are taking you can find Minimal Project Setup here: [React](https://canvas.kth.se/courses/59201/pages/minimal-react-web-project-setup?module_item_id=1360840), [Vue](https://canvas.kth.se/courses/59201/pages/minimal-vue-project-setup?module_item_id=1360842) and for [native](https://canvas.kth.se/courses/59201/pages/minimal-react-native-project-setup?module_item_id=1360841)
+---
 
-After the setup works, you can delete or edit this README.md file to explain what your project does and how to use it. 
+## Prerequisites
 
-Good luck with the Project!
+- [Node.js](https://nodejs.org/) v18+
+- [Expo Go](https://expo.dev/go) on your phone
+- [Android Studio](https://developer.android.com/studio) (for Android emulator)
+- [Xcode](https://developer.apple.com/xcode/) (for iOS simulator)
+
+---
+
+## Quick Start
+
+1. **Clone the repository**
+
+   ```bash
+   git clone https://gits-15.sys.kth.se/iprog-students/rameesha-siow-wslo-yyche-vt26-project
+   cd rameesha-siow-wslo-yyche-vt26-project
+   ```
+
+2. **Install dependencies**
+
+   ```bash
+   npm install
+   ```
+
+3. **Start the dev server**
+
+   ```bash
+   npm run dev
+   ```
+
+Once running, press `?` to see all options, then:
+
+| Key | Action |
+|-----|--------|
+| `w` | Open in web browser |
+| `a` | Open in Android emulator |
+| `i` | Open in iOS simulator (macOS only) |
+| `s` | Scan QR code with Expo Go on your phone |
+
+---
+
+## Tech Stack (for now, add ltr)
+
+- [React Native](https://reactnative.dev/) + [Expo SDK 55](https://expo.dev/)
+- [Expo Router](https://expo.github.io/router/) — file-based navigation
+- [MobX](https://mobx.js.org/) — reactive state management

@@ -6,11 +6,13 @@ import {
     signInWithEmailAndPassword,
     signOut
 } from "firebase/auth";
+import { getFirestore, doc, setDoc, serverTimestamp } from "firebase/firestore";
 
 import { firebaseConfig } from "/src/firebaseConfig.js";
 
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
+const db = getFirestore(app);
 // most of this code is copied from the firebase auth guide
 
 
@@ -34,9 +36,18 @@ export function connectToAuth(model) {
     return unsubscribe;
 }
 
-// sign up a new user with email and password
-export function signUpWithEmail(email, password) {
-    return createUserWithEmailAndPassword(auth, email, password);
+// sign up a new user with email and password,
+// then create their document in Firestore users collection (the stuff inside setdoc can add on ltr ah)
+export async function signUpWithEmail(email, password) {
+    const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+    await setDoc(doc(db, "users", userCredential.user.uid), {
+        email: userCredential.user.email,
+        name: "",
+        wishlist: [],
+        visitedPlaces: [],
+        createdAt: serverTimestamp(),
+    });
+    return userCredential;
 }
 
 // sign in an existing user with email and password

@@ -16,6 +16,10 @@ class AppModel {
     // ready is false until onauthstatechanged fires for the first time (firebaseee)
     ready = false;
 
+    // user's current device location { latitude, longitude } or null
+    // i think this can be shared across map, weather, news features.. and other features that require location (earthquake too ig)
+    currentLocation = null;
+
     constructor() {
         makeAutoObservable(this);   // observe the variables, auto update UI if they change
     }
@@ -42,6 +46,11 @@ class AppModel {
     setReady(status) {
         console.log(`ready updated to -> ${status}`);
         this.ready = status;
+    }
+
+    setCurrentLocation(location) {
+        console.log(`currentloc is updated to -> ${JSON.stringify(location)}`);
+        this.currentLocation = location;
     }
 }
 

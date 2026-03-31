@@ -1,7 +1,15 @@
-// entry page
-import { model } from "/src/model.js"
-import HomePresenter from "/src/presenters/homePresenter.jsx"
+import { ScrollView, View } from "react-native";
+import { observer } from "mobx-react-lite";
+import { model } from "../model.js";
 
-export default function IndexPage() {
-    return <HomePresenter model={model} />
-}
+import HomePresenter from "../presenters/homePresenter.jsx";
+
+export default observer(function ExplorePage() {
+  return (
+    <ScrollView>
+      <View>
+        <HomePresenter model={model} />
+      </View>
+    </ScrollView> 
+  );
+});

@@ -11,6 +11,11 @@ class AppModel {
     weatherAlerts = [];
     loadingStatus = false;
 
+    // auth state — null means not logged in, object means logged in
+    currentUser = null;
+    // ready is false until onauthstatechanged fires for the first time (firebaseee)
+    ready = false;
+
     constructor() {
         makeAutoObservable(this);   // observe the variables, auto update UI if they change
     }
@@ -25,6 +30,18 @@ class AppModel {
     setWeatherAlerts(alerts) {
         console.log(`weatherAlerts updated! Found ${alerts.length} alerts.`);
         this.weatherAlerts = alerts;
+    }
+
+    // set the current logged-in user ({ uid, email } or null)
+    setCurrentUser(user) {
+        console.log(`currentUser updated to -> ${user ? user.email : "null"}`);
+        this.currentUser = user;
+    }
+
+    // set ready (true once firebase auth state is resolved on app start)
+    setReady(status) {
+        console.log(`ready updated to -> ${status}`);
+        this.ready = status;
     }
 }
 

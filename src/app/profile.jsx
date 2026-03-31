@@ -1,18 +1,22 @@
-import { ScrollView, View, Text } from "react-native";
+import { ScrollView, View, Text, Button } from "react-native";
 import { observer } from "mobx-react-lite";
 import { model } from "../model.js";
-
-// import { ProfilePresenter } from "../presenters/ProfilePresenter.jsx"  // create this ltr on
+import { signOutUser } from "/src/firebaseModel.js";
 
 export default observer(function ProfilePage() {
-  return (
-    <ScrollView>
-      <View style={{ padding: 20 }}>
-        {/* just put some mock data here first */}
-        <Text style={{ fontSize: 24, fontWeight: 'bold' }}>User Profile</Text>
-        <Text>Update personal particulars here.</Text>
-        {/* <ProfilePresenter model={model} /> */}
-      </View>
-    </ScrollView> 
-  );
+    async function userPressedLogoutACB() {
+        await signOutUser();
+    }
+
+    return (
+        <ScrollView>
+            <View style={{ padding: 20 }}>
+                <Text style={{ fontSize: 24, fontWeight: "bold" }}>User Profile</Text>
+                <Text style={{ marginTop: 8, color: "#555" }}>{model.currentUser?.email}</Text>
+                <View style={{ marginTop: 32 }}>
+                    <Button title="Logout" color="#b91c1c" onPress={userPressedLogoutACB} />
+                </View>
+            </View>
+        </ScrollView>
+    );
 });

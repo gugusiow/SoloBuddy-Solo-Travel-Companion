@@ -5,6 +5,8 @@ class AppModel {
     attractions = [
         { id: 1, name: "Eiffel Tower", location: "Paris, France", safetyRating: 4.2 },
         { id: 2, name: "Colosseum", location: "Rome, Italy", safetyRating: 3.8 },
+        { id: 3, name: "Vasa Museum", location: "Stockholm, Sweden", safetyRating: 5.0},
+        { id: 4, name: "Louvre Museum", location: "Paris, France", safetyRating: 4.2}
     ]
     
     // try to set up weather alert system

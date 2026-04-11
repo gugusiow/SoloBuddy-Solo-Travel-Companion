@@ -1,8 +1,8 @@
 // following https://github.com/expo/expo/issues/40513
 export default {
   expo: {
-    name: "project",
-    slug: "project",
+    name: "SoloBuddy",
+    slug: "solobuddy",
     version: "1.0.0",
     orientation: "portrait",
     scheme: "project",
@@ -43,6 +43,12 @@ export default {
         "@rnmapbox/maps",
         {
           RNMapboxMapsVersion: "11.20.1",
+        },
+      ],
+      [
+        "react-native-maps",
+        {
+          androidGoogleMapsApiKey: process.env.EXPO_PUBLIC_GOOGLE_API_KEY,
         },
       ],
     ],

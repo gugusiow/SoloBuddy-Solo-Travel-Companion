@@ -228,6 +228,7 @@ export function HomeView(props) {
         <AttractionsMap
           attractions={baseAttractions}
           currentAttraction={props.currentAttraction}
+          onSelectAttraction={props.onSelectAttraction}
         />
       </View>
 

@@ -125,6 +125,7 @@ export function saveUserProfile(uid, profilePatch) {
   return setDoc(doc(db, "users", uid), profilePatch, { merge: true });
 }
 
+// func to upload photo
 export async function uploadProfilePhoto(uri, uid) {
   const response = await fetch(uri);
   const blob = await response.blob();

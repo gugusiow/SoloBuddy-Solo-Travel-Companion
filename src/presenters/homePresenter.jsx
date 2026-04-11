@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { observer } from "mobx-react-lite";
 import * as Location from "expo-location";
 import { HomeView } from "../native-views/homeView.jsx";
@@ -6,6 +6,7 @@ import { enrichAttractionsWithCoordinates } from "../services/googleMapsService.
 import {
   fetchWeatherBannerACB,
   buildWeatherAlertsACB,
+  fetchWeatherDetailsACB, 
 } from "../services/weatherService.js";
 
 const mockAttractions = [
@@ -43,6 +44,8 @@ const mockAttractions = [
 
 const HomePresenter = observer(function HomePresenter(props) {
   const model = props.model;
+
+  const [weatherDetailsLoading, setWeatherDetailsLoading] = useState(false);
 
   async function getUserLocationACB() {
     if (
@@ -118,6 +121,28 @@ const HomePresenter = observer(function HomePresenter(props) {
       ]);
     } finally {
       model.setLoading?.(false);
+    }
+  }
+
+  async function userWantsToOpenWeatherDetailsACB() {
+    setWeatherDetailsLoading(true);
+
+    try {
+      const location = await getUserLocationACB();
+
+      const detailedWeather = await fetchWeatherDetailsACB(
+        location.latitude,
+        location.longitude
+      );
+
+      model.setCurrentWeather?.({
+        ...model.currentWeather,
+        ...detailedWeather,
+      });
+    } catch (error) {
+      console.error("Failed to load weather details:", error);
+    } finally {
+      setWeatherDetailsLoading(false);
     }
   }
 
@@ -222,6 +247,8 @@ const HomePresenter = observer(function HomePresenter(props) {
       currentAttraction={model.currentAttraction}
       currentWeather={model.currentWeather}
       weatherAlerts={model.weatherAlerts || []}
+      weatherDetailsLoading={weatherDetailsLoading}
+      onOpenWeatherDetails={userWantsToOpenWeatherDetailsACB}
       touristNews={model.touristNews || []}
       loadingStatus={model.loadingStatus}
       onRefreshSafetyAlerts={userWantsToRefreshSafetyAlertsACB}

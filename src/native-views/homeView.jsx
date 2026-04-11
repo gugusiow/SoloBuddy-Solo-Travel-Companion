@@ -2,14 +2,17 @@ import React, { useRef, useState, useEffect, useMemo } from "react";
 import {
   View,
   Text,
-  StyleSheet,
   Animated,
   Dimensions,
   Pressable,
   ScrollView,
+  Modal,
+  ActivityIndicator,
 } from "react-native";
 import { AttractionCard } from "./attractionCard";
 import { AttractionsMap } from "./attractionsMap";
+
+import styles from "./homeView.styles.js";
 
 export function HomeView(props) {
   // added some variables to use for attraction card animation
@@ -17,6 +20,7 @@ export function HomeView(props) {
   const flatListRef = useRef(null);
   const [listWidth, setListWidth] = useState(Dimensions.get("window").width);
   const [visibleAlerts, setVisibleAlerts] = useState([]);
+  const [weatherModalVisible, setWeatherModalVisible] = useState(false);
 
   const baseAttractions = props.attractions || [];
   const newsItems = props.touristNews || [];
@@ -80,6 +84,24 @@ export function HomeView(props) {
 
   function userWantsToSeeMoreACB(attraction) {
     props.onSelectAttraction?.(attraction);
+  }
+
+  function openWeatherModalACB() {
+    setWeatherModalVisible(true);
+    props.onOpenWeatherDetails?.();
+  }
+
+  function closeWeatherModalACB() {
+    setWeatherModalVisible(false);
+  }
+
+  function renderWeatherMetricACB(label, value) {
+    return (
+      <View key={label} style={styles.weatherMetricCard}>
+        <Text style={styles.weatherMetricLabel}>{label}</Text>
+        <Text style={styles.weatherMetricValue}>{value ?? "--"}</Text>
+      </View>
+    );
   }
 
   function renderAlertACB(alert, index) {
@@ -195,336 +217,306 @@ export function HomeView(props) {
   }
 
   return (
-    <ScrollView
-      style={styles.container}
-      contentContainerStyle={styles.contentContainer}
-      showsVerticalScrollIndicator={false}
-    >
-      {weather ? (
-        <View
-          style={[
-            styles.weatherBanner,
-            weather.isDaytime ? styles.weatherDay : styles.weatherNight,
-          ]}
-        >
-          <View>
-            <Text style={[styles.weatherEyebrow, bannerTextStyle]}>Current weather</Text>
-            <Text style={[styles.weatherTemp, bannerTextStyle]}>
-              {weather.temperature}°{weather.unit || "C"}
-            </Text>
-            <Text style={[styles.weatherCondition, bannerTextStyle]}>{weather.condition}</Text>
-          </View>
+    <View style={{ flex: 1 }}>
+      <ScrollView
+        style={styles.container}
+        contentContainerStyle={styles.contentContainer}
+        showsVerticalScrollIndicator={false}
+      >
+        {weather ? (
+          <Pressable
+            onPress={openWeatherModalACB}
+            style={({ pressed }) => [
+              styles.weatherBanner,
+              weather.isDaytime ? styles.weatherDay : styles.weatherNight,
+              pressed && styles.weatherBannerPressed,
+            ]}
+          >
+            <View>
+              <Text style={[styles.weatherEyebrow, bannerTextStyle]}>
+                Current weather
+              </Text>
 
-          <View style={styles.weatherAside}>
-            <Text style={[styles.weatherRangeLabel, bannerTextStyle]}>Today</Text>
-            <Text style={[styles.weatherRange, bannerTextStyle]}>
-              H: {weather.high}°  L: {weather.low}°
+              <Text style={[styles.weatherTemp, bannerTextStyle]}>
+                {weather.temperature}°{weather.unit || "C"}
+              </Text>
+
+              <Text style={[styles.weatherCondition, bannerTextStyle]}>
+                {weather.condition}
+              </Text>
+            </View>
+
+            <View style={styles.weatherAside}>
+              <Text style={[styles.weatherRangeLabel, bannerTextStyle]}>
+                Today
+              </Text>
+
+              <Text style={[styles.weatherRange, bannerTextStyle]}>
+                H: {weather.high}° L: {weather.low}°
+              </Text>
+
+              <Text style={[styles.weatherTapHint, bannerTextStyle]}>
+                Tap for details
+              </Text>
+            </View>
+          </Pressable>
+        ) : null}
+
+        <View style={styles.mapSection}>
+          <AttractionsMap
+            attractions={baseAttractions}
+            currentAttraction={props.currentAttraction}
+            onSelectAttraction={props.onSelectAttraction}
+          />
+        </View>
+
+        {props.loadingStatus ? (
+          <Text style={styles.loadingText}>Loading safety data...</Text>
+        ) : (
+          visibleAlerts.map(renderAlertACB)
+        )}
+
+        <View style={styles.buttonWrapper}>
+          <Pressable
+            onPress={props.onRefreshSafetyAlerts}
+            style={({ pressed }) => [
+              styles.refreshButton,
+              pressed && styles.refreshButtonPressed,
+            ]}
+          >
+            <Text style={styles.refreshButtonText}>Refresh safety data</Text>
+          </Pressable>
+        </View>
+
+        <Text style={styles.sectionTitle}>Attractions</Text>
+
+        <View
+          style={styles.carouselContainer}
+          onLayout={function onCarouselLayoutACB(event) {
+            setListWidth(event.nativeEvent.layout.width);
+          }}
+        >
+          <Animated.FlatList
+            ref={flatListRef}
+            data={loopedAttractions}
+            keyExtractor={keyExtractorACB}
+            renderItem={renderAttractionRowACB}
+            horizontal
+            showsHorizontalScrollIndicator={false}
+            contentContainerStyle={{ paddingHorizontal: sideSpacing }}
+            snapToInterval={fullWidth}
+            decelerationRate="fast"
+            bounces={false}
+            onMomentumScrollEnd={handleCarouselMomentumEndACB}
+            scrollEventThrottle={16}
+            getItemLayout={function getItemLayoutACB(_data, index) {
+              return {
+                length: fullWidth,
+                offset: fullWidth * index,
+                index,
+              };
+            }}
+            onScroll={Animated.event(
+              [{ nativeEvent: { contentOffset: { x: scrollX } } }],
+              { useNativeDriver: true }
+            )}
+          />
+        </View>
+
+        <View style={styles.newsSectionHeader}>
+          <Text style={styles.sectionTitle}>News</Text>
+
+          <Pressable
+            onPress={props.onRefreshNews}
+            style={({ pressed }) => [
+              styles.newsRefreshButton,
+              pressed && styles.refreshButtonPressed,
+            ]}
+          >
+            <Text style={styles.newsRefreshIcon}>↻</Text>
+          </Pressable>
+        </View>
+
+        <View style={styles.newsSection}>
+          {newsItems.length ? (
+            newsItems.map(renderNewsItemACB)
+          ) : (
+            <Text style={styles.emptyNewsText}>
+              No important local news for tourist areas right now.
             </Text>
+          )}
+        </View>
+      </ScrollView>
+
+      <Modal
+        visible={weatherModalVisible}
+        transparent
+        animationType="slide"
+        onRequestClose={closeWeatherModalACB}
+      >
+        <View style={styles.modalBackdrop}>
+          <Pressable style={styles.modalOverlay} onPress={closeWeatherModalACB} />
+
+          <View style={styles.weatherModalSheet}>
+            <View style={styles.weatherModalHeader}>
+              <View>
+                <Text style={styles.weatherModalTitle}>Weather details</Text>
+              </View>
+
+              <Pressable
+                onPress={closeWeatherModalACB}
+                style={({ pressed }) => [
+                  styles.weatherModalCloseButton,
+                  pressed && styles.refreshButtonPressed,
+                ]}
+              >
+                <Text style={styles.weatherModalCloseText}>✕</Text>
+              </Pressable>
+            </View>
+
+            <ScrollView
+              showsVerticalScrollIndicator={false}
+              contentContainerStyle={styles.weatherModalContent}
+            >
+              <View style={styles.weatherHeroCard}>
+                <Text style={styles.weatherHeroEyebrow}>Current weather</Text>
+                <Text style={styles.weatherHeroTemp}>
+                  {weather?.temperature ?? "--"}°{weather?.unit || "C"}
+                </Text>
+                <Text style={styles.weatherHeroCondition}>
+                  {weather?.condition || "Unavailable"}
+                </Text>
+                <Text style={styles.weatherHeroRange}>
+                  H: {weather?.high ?? "--"}°   L: {weather?.low ?? "--"}°
+                </Text>
+              </View>
+
+              {props.weatherDetailsLoading ? (
+                <View style={styles.weatherLoadingBlock}>
+                  <ActivityIndicator size="small" color="#ffffff" />
+                  <Text style={styles.weatherLoadingText}>
+                    Loading detailed weather...
+                  </Text>
+                </View>
+              ) : (
+                <>
+                  <View style={styles.weatherMetricsGrid}>
+                    <View style={styles.weatherMetricCard}>
+                      <Text style={styles.weatherMetricLabel}>UV index</Text>
+                      <Text style={styles.weatherMetricDescription}>
+                        {weather?.uvLabel ? `${weather.uvLabel} right now` : "Unavailable"}
+                      </Text>
+                      <Text style={styles.weatherMetricValue}>
+                        {weather?.uvIndex ?? "--"}
+                      </Text>
+
+                      <View style={styles.uvBarTrack}>
+                        <View
+                          style={[
+                            styles.uvBarFill,
+                            {
+                              width: `${Math.min(((weather?.uvIndex ?? 0) / 11) * 100, 100)}%`,
+                            },
+                          ]}
+                        />
+                      </View>
+                    </View>
+
+                    <View style={styles.weatherMetricCard}>
+                      <Text style={styles.weatherMetricLabel}>Humidity</Text>
+                      <Text style={styles.weatherMetricDescription}>
+                        {weather?.humidity != null
+                          ? "Current humidity"
+                          : "Unavailable"}
+                      </Text>
+                      <Text style={styles.weatherMetricValue}>
+                        {weather?.humidity != null ? `${weather.humidity}%` : "--"}
+                      </Text>
+
+                      <View style={styles.humidityBarTrack}>
+                        <View
+                          style={[
+                            styles.humidityBarFill,
+                            {
+                              width: `${Math.min(weather?.humidity ?? 0, 100)}%`,
+                            },
+                          ]}
+                        />
+                      </View>
+                    </View>
+
+                    <View style={styles.weatherMetricCard}>
+                      <Text style={styles.weatherMetricLabel}>Wind</Text>
+                      <Text style={styles.weatherMetricDescription}>
+                        {weather?.windSpeed ? "Current wind speed" : "Unavailable"}
+                      </Text>
+                      <Text style={styles.weatherMetricValueSmall}>
+                        {weather?.windSpeed || "--"}
+                      </Text>
+                    </View>
+
+                    <View style={styles.weatherMetricCard}>
+                      <Text style={styles.weatherMetricLabel}>Air quality</Text>
+                      <Text style={styles.weatherMetricDescription}>
+                        {weather?.airQuality?.label || "Unavailable"}
+                      </Text>
+                      <Text style={styles.weatherMetricValue}>
+                        {weather?.airQuality?.aqi ?? "--"}
+                      </Text>
+                    </View>
+                  </View>
+
+                  <View style={styles.sunCard}>
+                    <View style={styles.sunCurveWrapper}>
+                      <View style={styles.sunCurveGlow} />
+                      <View style={styles.sunCurveArc} />
+                      <View style={styles.sunHorizon} />
+                    </View>
+
+                    <View style={styles.sunTimesRow}>
+                      <View>
+                        <Text style={styles.sunTimeLabel}>Sunrise</Text>
+                        <Text style={styles.sunTimeValue}>{weather?.sunrise ?? "--"}</Text>
+                      </View>
+
+                      <View style={styles.sunTimesRight}>
+                        <Text style={styles.sunTimeLabel}>Sunset</Text>
+                        <Text style={styles.sunTimeValue}>{weather?.sunset ?? "--"}</Text>
+                      </View>
+                    </View>
+                  </View>
+
+                  <Text style={styles.weatherSectionTitle}>5-day forecast</Text>
+
+                  <View style={styles.forecastList}>
+                    {(weather?.dailyForecast || []).map((day, index) => (
+                      <View key={`${day.day}-${index}`} style={styles.forecastRow}>
+                        <View>
+                          <Text style={styles.forecastDay}>{day.day}</Text>
+                          <Text style={styles.forecastCondition}>{day.condition}</Text>
+                        </View>
+
+                        <Text style={styles.forecastTemps}>
+                          {day.high}° / {day.low}°
+                        </Text>
+                      </View>
+                    ))}
+
+                    {!weather?.dailyForecast?.length ? (
+                      <Text style={styles.emptyForecastText}>
+                        Forecast will appear here after detailed weather loads.
+                      </Text>
+                    ) : null}
+                  </View>
+                </>
+              )}
+            </ScrollView>
           </View>
         </View>
-      ) : null}
-
-      <View style={styles.mapSection}>
-        <AttractionsMap
-          attractions={baseAttractions}
-          currentAttraction={props.currentAttraction}
-          onSelectAttraction={props.onSelectAttraction}
-        />
-      </View>
-
-      {props.loadingStatus ? (
-        <Text style={styles.loadingText}>Loading safety data...</Text>
-      ) : (
-        visibleAlerts.map(renderAlertACB)
-      )}
-
-      <View style={styles.buttonWrapper}>
-        <Pressable
-          onPress={props.onRefreshSafetyAlerts}
-          style={({ pressed }) => [
-            styles.refreshButton,
-            pressed && styles.refreshButtonPressed,
-          ]}
-        >
-          <Text style={styles.refreshButtonText}>Refresh safety data</Text>
-        </Pressable>
-      </View>
-
-      <Text style={styles.sectionTitle}>Attractions</Text>
-
-      <View
-        style={styles.carouselContainer}
-        onLayout={function onCarouselLayoutACB(event) {
-          setListWidth(event.nativeEvent.layout.width);
-        }}
-      >
-        <Animated.FlatList
-          ref={flatListRef}
-          data={loopedAttractions}
-          keyExtractor={keyExtractorACB}
-          renderItem={renderAttractionRowACB}
-          horizontal
-          showsHorizontalScrollIndicator={false}
-          contentContainerStyle={{ paddingHorizontal: sideSpacing }}
-          snapToInterval={fullWidth}
-          decelerationRate="fast"
-          bounces={false}
-          onMomentumScrollEnd={handleCarouselMomentumEndACB}
-          scrollEventThrottle={16}
-          getItemLayout={function getItemLayoutACB(_data, index) {
-            return {
-              length: fullWidth,
-              offset: fullWidth * index,
-              index,
-            };
-          }}
-          onScroll={Animated.event(
-            [{ nativeEvent: { contentOffset: { x: scrollX } } }],
-            { useNativeDriver: true }
-          )}
-        />
-      </View>
-
-      <View style={styles.newsSectionHeader}>
-        <Text style={styles.sectionTitle}>News</Text>
-
-        <Pressable
-          onPress={props.onRefreshNews}
-          style={({ pressed }) => [
-            styles.newsRefreshButton,
-            pressed && styles.refreshButtonPressed,
-          ]}
-        >
-          <Text style={styles.newsRefreshIcon}>↻</Text>
-        </Pressable>
-      </View>
-
-      <View style={styles.newsSection}>
-        {newsItems.length ? (
-          newsItems.map(renderNewsItemACB)
-        ) : (
-          <Text style={styles.emptyNewsText}>
-            No important local news for tourist areas right now.
-          </Text>
-        )}
-      </View>
-    </ScrollView>
+      </Modal>
+    </View>
   );
 }
 
 // lots and lots of styling...maybe need to move it to a separate file
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: "#f8fafc",
-  },
-  contentContainer: {
-    paddingTop: 16,
-    paddingBottom: 28,
-  },
-  weatherBanner: {
-    marginHorizontal: 16,
-    marginBottom: 12,
-    paddingHorizontal: 16,
-    paddingVertical: 14,
-    borderRadius: 16,
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between",
-  },
-  weatherDay: {
-    backgroundColor: "#dbeafe",
-  },
-  weatherNight: {
-    backgroundColor: "#112d5b",
-  },
-  weatherEyebrow: {
-    fontSize: 12,
-    fontWeight: "700",
-    textTransform: "uppercase",
-    letterSpacing: 0.6,
-    color: "#475569",
-  },
-  weatherTemp: {
-    marginTop: 4,
-    fontSize: 30,
-    fontWeight: "800",
-    color: "#0f172a",
-  },
-  weatherCondition: {
-    marginTop: 4,
-    fontSize: 14,
-    color: "#334155",
-  },
-  weatherAside: {
-    alignItems: "flex-end",
-  },
-  weatherTextNight: {
-    color: "#ffffff",
-  },
-  weatherRangeLabel: {
-    fontSize: 12,
-    fontWeight: "700",
-    color: "#475569",
-    textTransform: "uppercase",
-    letterSpacing: 0.6,
-  },
-  weatherRange: {
-    marginTop: 6,
-    fontSize: 15,
-    fontWeight: "700",
-    color: "#0f172a",
-  },
-  mapSection: {
-    marginHorizontal: 16,
-    marginBottom: 12,
-    borderRadius: 14,
-    overflow: "hidden",
-    height: 420,
-  },
-  loadingText: {
-    marginHorizontal: 16,
-    marginTop: 8,
-    color: "#475569",
-    fontSize: 14,
-  },
-  alertBox: {
-    backgroundColor: "#fee2e2",
-    padding: 12,
-    marginTop: 10,
-    marginHorizontal: 16,
-    borderRadius: 12,
-  },
-  alertTitle: {
-    color: "#991b1b",
-    fontWeight: "700",
-  },
-  alertHeader: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between",
-    marginBottom: 6,
-  },
-  closeButton: {
-    width: 28,
-    height: 28,
-    borderRadius: 14,
-    alignItems: "center",
-    justifyContent: "center",
-    backgroundColor: "#fecaca",
-  },
-  closeButtonText: {
-    fontSize: 14,
-    color: "#991b1b",
-    fontWeight: "700",
-  },
-  alertDescription: {
-    color: "#7f1d1d",
-  },
-  buttonWrapper: {
-    marginTop: 14,
-    marginHorizontal: 16,
-  },
-  refreshButton: {
-    backgroundColor: "#0f172a",
-    paddingVertical: 14,
-    borderRadius: 14,
-    alignItems: "center",
-  },
-  refreshButtonPressed: {
-    opacity: 0.85,
-  },
-  refreshButtonText: {
-    color: "#ffffff",
-    fontSize: 15,
-    fontWeight: "700",
-  },
-  sectionTitle: {
-    fontSize: 20,
-    fontWeight: "700",
-    marginTop: 22,
-    marginBottom: 14,
-    marginHorizontal: 16,
-    color: "#111827",
-  },
-  carouselContainer: {
-    minHeight: 300,
-  },
-  cardWrapper: {
-    paddingBottom: 18,
-  },
-  newsSectionHeader: {
-    marginTop: 8,
-    marginHorizontal: 16,
-    marginBottom: 10,
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between",
-  },
-  newsRefreshButton: {
-    width: 36,
-    height: 36,
-    borderRadius: 18,
-    alignItems: "center",
-    justifyContent: "center",
-    backgroundColor: "#e2e8f0",
-  },
-  newsRefreshIcon: {
-    fontSize: 18,
-    fontWeight: "700",
-    color: "#0f172a",
-  },
-  newsSection: {
-    marginHorizontal: 16,
-    marginBottom: 12,
-  },
-  newsCard: {
-    backgroundColor: "#ffffff",
-    borderRadius: 14,
-    padding: 14,
-    marginBottom: 12,
-    borderWidth: 1,
-    borderColor: "#e5e7eb",
-  },
-  newsHeader: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between",
-    marginBottom: 8,
-  },
-  newsBadge: {
-    fontSize: 12,
-    fontWeight: "700",
-    color: "#000000",
-    backgroundColor: "#96a4e7",
-    paddingHorizontal: 8,
-    paddingVertical: 4,
-    borderRadius: 25,
-  },
-  newsSeverity: {
-    fontSize: 12,
-    fontWeight: "700",
-    color: "#b45309",
-  },
-  newsTitle: {
-    fontSize: 16,
-    fontWeight: "700",
-    color: "#111827",
-    marginBottom: 6,
-  },
-  newsDescription: {
-    fontSize: 14,
-    color: "#4b5563",
-    lineHeight: 20,
-  },
-  newsMeta: {
-    marginTop: 10,
-    fontSize: 12,
-    color: "#6b7280",
-  },
-  emptyNewsText: {
-    color: "#6b7280",
-    fontSize: 14,
-    lineHeight: 20,
-  },
-});
+// okay i moved them to a separate file

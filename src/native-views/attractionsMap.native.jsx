@@ -12,7 +12,10 @@ if (MAPBOX_TOKEN) {
 export function AttractionsMap({ attractions }) {
   const mappableAttractions = useMemo(function computeMappableACB() {
     return (attractions || []).filter(function hasCoordinatesACB(attraction) {
-      return Number.isFinite(attraction.latitude) && Number.isFinite(attraction.longitude);
+      return (
+        Number.isFinite(attraction.latitude) &&
+        Number.isFinite(attraction.longitude)
+      );
     });
   }, [attractions]);
 
@@ -48,14 +51,17 @@ export function AttractionsMap({ attractions }) {
   }
 
   return (
-    <Mapbox.MapView style={styles.map} styleURL={Mapbox.StyleURL.Street}>
-      <Mapbox.Camera centerCoordinate={center} zoomLevel={2.2} />
+    <Mapbox.MapView style={styles.map}>
+      <Mapbox.Camera
+        zoomLevel={mappableAttractions.length > 0 ? 11 : 2}
+        centerCoordinate={center}
+      />
 
       {mappableAttractions.map(function renderMarkerACB(attraction) {
         return (
           <Mapbox.PointAnnotation
-            key={String(attraction.id)}
-            id={String(attraction.id)}
+            key={attraction.id.toString()}
+            id={attraction.id.toString()}
             coordinate={[attraction.longitude, attraction.latitude]}
             title={attraction.name}
           >

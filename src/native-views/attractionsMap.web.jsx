@@ -21,11 +21,16 @@ export function AttractionsMap({ attractions }) {
     document.head.appendChild(link);
   }, []);
 
-  const center = useMemo(function computeCenterACB() {
-    const mappableAttractions = (attractions || []).filter(function hasCoordinatesACB(attraction) {
-      return Number.isFinite(attraction.latitude) && Number.isFinite(attraction.longitude);
+  const mappableAttractions = useMemo(function getMappableAttractionsACB() {
+    return (attractions || []).filter(function hasCoordinatesACB(attraction) {
+      return (
+        Number.isFinite(attraction.latitude) &&
+        Number.isFinite(attraction.longitude)
+      );
     });
+  }, [attractions]);
 
+  const center = useMemo(function computeCenterACB() {
     if (!mappableAttractions.length) {
       return { latitude: 20, longitude: 0 };
     }
@@ -44,13 +49,7 @@ export function AttractionsMap({ attractions }) {
       latitude: total.latitude / mappableAttractions.length,
       longitude: total.longitude / mappableAttractions.length,
     };
-  }, [attractions]);
-
-  const mappableAttractions = useMemo(function getMappableAttractionsACB() {
-    return (attractions || []).filter(function hasCoordinatesACB(attraction) {
-      return Number.isFinite(attraction.latitude) && Number.isFinite(attraction.longitude);
-    });
-  }, [attractions]);
+  }, [mappableAttractions]);
 
   const [viewState, setViewState] = useState({
     longitude: center.longitude,
@@ -65,10 +64,11 @@ export function AttractionsMap({ attractions }) {
           ...previous,
           longitude: center.longitude,
           latitude: center.latitude,
+          zoom: mappableAttractions.length > 0 ? 11 : 3,
         };
       });
     },
-    [center.longitude, center.latitude]
+    [center.longitude, center.latitude, mappableAttractions.length]
   );
 
   if (!MAPBOX_TOKEN) {
@@ -83,18 +83,16 @@ export function AttractionsMap({ attractions }) {
 
   return (
     <Map
-      style={styles.map}
+      {...viewState}
+      onMove={(event) => setViewState(event.viewState)}
       mapboxAccessToken={MAPBOX_TOKEN}
       mapStyle="mapbox://styles/mapbox/streets-v12"
-      {...viewState}
-      onMove={function onMoveACB(event) {
-        setViewState(event.viewState);
-      }}
+      style={styles.map}
     >
       {mappableAttractions.map(function renderMarkerACB(attraction) {
         return (
           <Marker
-            key={String(attraction.id)}
+            key={attraction.id.toString()}
             longitude={attraction.longitude}
             latitude={attraction.latitude}
             anchor="bottom"

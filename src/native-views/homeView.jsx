@@ -23,6 +23,9 @@ export function HomeView(props) {
   const weather = props.currentWeather || null;
   const shouldLoop = baseAttractions.length > 1;
 
+  // add some styling to switch from day to night
+  const bannerTextStyle = weather && !weather.isDaytime ? styles.weatherTextNight : null;
+
   const loopedAttractions = useMemo(function buildLoopedAttractionsACB() {
     if (!shouldLoop) {
       return baseAttractions;
@@ -205,16 +208,16 @@ export function HomeView(props) {
           ]}
         >
           <View>
-            <Text style={styles.weatherEyebrow}>Current weather</Text>
-            <Text style={styles.weatherTemp}>
+            <Text style={[styles.weatherEyebrow, bannerTextStyle]}>Current weather</Text>
+            <Text style={[styles.weatherTemp, bannerTextStyle]}>
               {weather.temperature}°{weather.unit || "C"}
             </Text>
-            <Text style={styles.weatherCondition}>{weather.condition}</Text>
+            <Text style={[styles.weatherCondition, bannerTextStyle]}>{weather.condition}</Text>
           </View>
 
           <View style={styles.weatherAside}>
-            <Text style={styles.weatherRangeLabel}>Today</Text>
-            <Text style={styles.weatherRange}>
+            <Text style={[styles.weatherRangeLabel, bannerTextStyle]}>Today</Text>
+            <Text style={[styles.weatherRange, bannerTextStyle]}>
               H: {weather.high}°  L: {weather.low}°
             </Text>
           </View>
@@ -332,7 +335,7 @@ const styles = StyleSheet.create({
     backgroundColor: "#dbeafe",
   },
   weatherNight: {
-    backgroundColor: "#1e293b",
+    backgroundColor: "#112d5b",
   },
   weatherEyebrow: {
     fontSize: 12,
@@ -354,6 +357,9 @@ const styles = StyleSheet.create({
   },
   weatherAside: {
     alignItems: "flex-end",
+  },
+  weatherTextNight: {
+    color: "#ffffff",
   },
   weatherRangeLabel: {
     fontSize: 12,
@@ -488,11 +494,11 @@ const styles = StyleSheet.create({
   newsBadge: {
     fontSize: 12,
     fontWeight: "700",
-    color: "#0f766e",
-    backgroundColor: "#ccfbf1",
+    color: "#000000",
+    backgroundColor: "#96a4e7",
     paddingHorizontal: 8,
     paddingVertical: 4,
-    borderRadius: 999,
+    borderRadius: 25,
   },
   newsSeverity: {
     fontSize: 12,

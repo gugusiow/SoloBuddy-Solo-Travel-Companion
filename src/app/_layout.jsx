@@ -24,6 +24,8 @@ export default observer(function RootLayout() {
         return <AuthPresenter model={model} />;
     }
 
+    const currentUserName = model.profile?.name || "there";
+
     // logged in
     return (
         <Tabs>
@@ -31,6 +33,8 @@ export default observer(function RootLayout() {
                 name="index" 
                 options={{
                     title: "Explore",
+                    tabBarLabel: "Explore",
+                    headerTitle: `Hey ${currentUserName}, let's explore!`,
                     tabBarIcon: function renderExploreTabIconACB() {
                         return <Text>🗺️</Text>;
                     },

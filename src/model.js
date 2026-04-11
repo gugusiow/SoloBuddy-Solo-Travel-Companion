@@ -25,6 +25,18 @@ class AppModel {
   // user's current device location { latitude, longitude } or null
   currentLocation = null;
 
+  // current weather in user's area
+  currentWeather = null;
+  setCurrentWeather(weather) {
+    this.currentWeather = weather;
+  }
+
+  // loading state for the weather banner
+  weatherLoading = false;
+  setWeatherLoading(status) {
+    this.weatherLoading = status;
+  }
+
   constructor() {
     makeAutoObservable(this, {}, { autoBind: true });
   }

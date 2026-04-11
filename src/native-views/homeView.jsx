@@ -20,6 +20,7 @@ export function HomeView(props) {
 
   const baseAttractions = props.attractions || [];
   const newsItems = props.touristNews || [];
+  const weather = props.currentWeather || null;
   const shouldLoop = baseAttractions.length > 1;
 
   const loopedAttractions = useMemo(function buildLoopedAttractionsACB() {
@@ -152,9 +153,10 @@ export function HomeView(props) {
       >
         <AttractionCard
           attraction={item}
-          onSeeMore={function onSeeMoreACB() {
+          onSeeMore={function onSeeMorePressACB() {
             userWantsToSeeMoreACB(item);
           }}
+          cardWidth={cardWidth}
         />
       </Animated.View>
     );
@@ -195,6 +197,30 @@ export function HomeView(props) {
       contentContainerStyle={styles.contentContainer}
       showsVerticalScrollIndicator={false}
     >
+      {weather ? (
+        <View
+          style={[
+            styles.weatherBanner,
+            weather.isDaytime ? styles.weatherDay : styles.weatherNight,
+          ]}
+        >
+          <View>
+            <Text style={styles.weatherEyebrow}>Current weather</Text>
+            <Text style={styles.weatherTemp}>
+              {weather.temperature}°{weather.unit || "C"}
+            </Text>
+            <Text style={styles.weatherCondition}>{weather.condition}</Text>
+          </View>
+
+          <View style={styles.weatherAside}>
+            <Text style={styles.weatherRangeLabel}>Today</Text>
+            <Text style={styles.weatherRange}>
+              H: {weather.high}°  L: {weather.low}°
+            </Text>
+          </View>
+        </View>
+      ) : null}
+
       <View style={styles.mapSection}>
         <AttractionsMap
           attractions={baseAttractions}
@@ -210,7 +236,7 @@ export function HomeView(props) {
 
       <View style={styles.buttonWrapper}>
         <Pressable
-          onPress={props.onRefresh}
+          onPress={props.onRefreshSafetyAlerts}
           style={({ pressed }) => [
             styles.refreshButton,
             pressed && styles.refreshButtonPressed,
@@ -255,7 +281,19 @@ export function HomeView(props) {
         />
       </View>
 
-      <Text style={styles.sectionTitle}>Local News</Text>
+      <View style={styles.newsSectionHeader}>
+        <Text style={styles.sectionTitle}>News</Text>
+
+        <Pressable
+          onPress={props.onRefreshNews}
+          style={({ pressed }) => [
+            styles.newsRefreshButton,
+            pressed && styles.refreshButtonPressed,
+          ]}
+        >
+          <Text style={styles.newsRefreshIcon}>↻</Text>
+        </Pressable>
+      </View>
 
       <View style={styles.newsSection}>
         {newsItems.length ? (
@@ -270,6 +308,7 @@ export function HomeView(props) {
   );
 }
 
+// lots and lots of styling...maybe need to move it to a separate file
 const styles = StyleSheet.create({
   container: {
     flex: 1,
@@ -278,6 +317,56 @@ const styles = StyleSheet.create({
   contentContainer: {
     paddingTop: 16,
     paddingBottom: 28,
+  },
+  weatherBanner: {
+    marginHorizontal: 16,
+    marginBottom: 12,
+    paddingHorizontal: 16,
+    paddingVertical: 14,
+    borderRadius: 16,
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+  },
+  weatherDay: {
+    backgroundColor: "#dbeafe",
+  },
+  weatherNight: {
+    backgroundColor: "#1e293b",
+  },
+  weatherEyebrow: {
+    fontSize: 12,
+    fontWeight: "700",
+    textTransform: "uppercase",
+    letterSpacing: 0.6,
+    color: "#475569",
+  },
+  weatherTemp: {
+    marginTop: 4,
+    fontSize: 30,
+    fontWeight: "800",
+    color: "#0f172a",
+  },
+  weatherCondition: {
+    marginTop: 4,
+    fontSize: 14,
+    color: "#334155",
+  },
+  weatherAside: {
+    alignItems: "flex-end",
+  },
+  weatherRangeLabel: {
+    fontSize: 12,
+    fontWeight: "700",
+    color: "#475569",
+    textTransform: "uppercase",
+    letterSpacing: 0.6,
+  },
+  weatherRange: {
+    marginTop: 6,
+    fontSize: 15,
+    fontWeight: "700",
+    color: "#0f172a",
   },
   mapSection: {
     marginHorizontal: 16,
@@ -356,6 +445,27 @@ const styles = StyleSheet.create({
   },
   cardWrapper: {
     paddingBottom: 18,
+  },
+  newsSectionHeader: {
+    marginTop: 8,
+    marginHorizontal: 16,
+    marginBottom: 10,
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+  },
+  newsRefreshButton: {
+    width: 36,
+    height: 36,
+    borderRadius: 18,
+    alignItems: "center",
+    justifyContent: "center",
+    backgroundColor: "#e2e8f0",
+  },
+  newsRefreshIcon: {
+    fontSize: 18,
+    fontWeight: "700",
+    color: "#0f172a",
   },
   newsSection: {
     marginHorizontal: 16,

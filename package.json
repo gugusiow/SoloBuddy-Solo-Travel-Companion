@@ -10,7 +10,7 @@
     "@rnmapbox/maps": "^10.3.0",
     "expo": "~55.0.4",
     "expo-image-picker": "~55.0.18",
-    "expo-location": "~55.1.4",
+    "expo-location": "~55.1.8",
     "expo-router": "~55.0.2",
     "firebase": "latest",
     "mapbox-gl": "^2.15.0",

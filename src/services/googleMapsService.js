@@ -1,7 +1,7 @@
 import { Platform } from "react-native";
 
 // created this new file to call the Gmaps API and use it to get location data
-const GOOGLE_MAPS_API_KEY = process.env.EXPO_PUBLIC_GOOGLE_MAPS_API_KEY;
+const GOOGLE_MAPS_API_KEY = process.env.EXPO_PUBLIC_GOOGLE_API_KEY;
 
 let googleMapsScriptPromise = null;
 
@@ -28,7 +28,7 @@ async function loadGoogleMapsScriptOnWeb() {
   }
 
   if (!GOOGLE_MAPS_API_KEY) {
-    throw new Error("Missing EXPO_PUBLIC_GOOGLE_MAPS_API_KEY");
+    throw new Error("Missing EXPO_PUBLIC_GOOGLE_API_KEY");
   }
 
   if (window.google?.maps) {

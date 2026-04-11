@@ -6,6 +6,7 @@ import {
   Animated,
   Dimensions,
   Pressable,
+  ScrollView,
 } from "react-native";
 import { AttractionCard } from "./attractionCard";
 import { AttractionsMap } from "./attractionsMap";
@@ -18,6 +19,7 @@ export function HomeView(props) {
   const [visibleAlerts, setVisibleAlerts] = useState([]);
 
   const baseAttractions = props.attractions || [];
+  const newsItems = props.touristNews || [];
   const shouldLoop = baseAttractions.length > 1;
 
   const loopedAttractions = useMemo(function buildLoopedAttractionsACB() {
@@ -83,10 +85,13 @@ export function HomeView(props) {
           <Text style={styles.alertTitle}>{alert.event}</Text>
 
           <Pressable
-            onPress={function closeAlertACB() {
+            onPress={function onDismissAlertACB() {
               dismissAlertACB(index);
             }}
-            style={styles.closeButton}
+            style={({ pressed }) => [
+              styles.closeButton,
+              pressed && styles.refreshButtonPressed,
+            ]}
           >
             <Text style={styles.closeButtonText}>✕</Text>
           </Pressable>
@@ -97,7 +102,24 @@ export function HomeView(props) {
     );
   }
 
-  // made some changes to renderAttractionRowACB
+  function renderNewsItemACB(item, index) {
+    return (
+      <View key={`${item.id ?? "news"}-${index}`} style={styles.newsCard}>
+        <View style={styles.newsHeader}>
+          <Text style={styles.newsBadge}>{item.area}</Text>
+          <Text style={styles.newsSeverity}>{item.severity}</Text>
+        </View>
+
+        <Text style={styles.newsTitle}>{item.title}</Text>
+        <Text style={styles.newsDescription}>{item.summary}</Text>
+
+        {!!item.publishedAt && (
+          <Text style={styles.newsMeta}>{item.publishedAt}</Text>
+        )}
+      </View>
+    );
+  }
+
   function renderAttractionRowACB({ item, index }) {
     const inputRange = [
       (index - 1) * fullWidth,
@@ -123,15 +145,16 @@ export function HomeView(props) {
           styles.cardWrapper,
           {
             width: cardWidth,
-            marginHorizontal: spacing / 2,
+            marginRight: spacing,
             transform: [{ scale }, { translateY }],
           },
         ]}
       >
         <AttractionCard
           attraction={item}
-          onSeeMore={userWantsToSeeMoreACB}
-          cardWidth={cardWidth}
+          onSeeMore={function onSeeMoreACB() {
+            userWantsToSeeMoreACB(item);
+          }}
         />
       </Animated.View>
     );
@@ -163,13 +186,20 @@ export function HomeView(props) {
   }
 
   function keyExtractorACB(item, index) {
-    return `${item.id.toString()}-${index}`;
+    return `${item.id ?? "item"}-${index}`;
   }
 
   return (
-    <View style={styles.container}>
+    <ScrollView
+      style={styles.container}
+      contentContainerStyle={styles.contentContainer}
+      showsVerticalScrollIndicator={false}
+    >
       <View style={styles.mapSection}>
-        <AttractionsMap {...props} />
+        <AttractionsMap
+          attractions={baseAttractions}
+          currentAttraction={props.currentAttraction}
+        />
       </View>
 
       {props.loadingStatus ? (
@@ -180,7 +210,7 @@ export function HomeView(props) {
 
       <View style={styles.buttonWrapper}>
         <Pressable
-          onPress={props.onRefreshSafetyData}
+          onPress={props.onRefresh}
           style={({ pressed }) => [
             styles.refreshButton,
             pressed && styles.refreshButtonPressed,
@@ -194,7 +224,7 @@ export function HomeView(props) {
 
       <View
         style={styles.carouselContainer}
-        onLayout={function handleListLayoutACB(event) {
+        onLayout={function onCarouselLayoutACB(event) {
           setListWidth(event.nativeEvent.layout.width);
         }}
       >
@@ -205,48 +235,49 @@ export function HomeView(props) {
           renderItem={renderAttractionRowACB}
           horizontal
           showsHorizontalScrollIndicator={false}
-          bounces={false}
-          decelerationRate="fast"
-          disableIntervalMomentum
+          contentContainerStyle={{ paddingHorizontal: sideSpacing }}
           snapToInterval={fullWidth}
-          snapToAlignment="start"
-          // make it so it cycles thru instead of ending at left or right
-          initialScrollIndex={shouldLoop ? 1 : 0}
-          getItemLayout={function getItemLayoutACB(_, index) {
+          decelerationRate="fast"
+          bounces={false}
+          onMomentumScrollEnd={handleCarouselMomentumEndACB}
+          scrollEventThrottle={16}
+          getItemLayout={function getItemLayoutACB(_data, index) {
             return {
               length: fullWidth,
               offset: fullWidth * index,
               index,
             };
           }}
-          contentContainerStyle={{
-            paddingHorizontal: sideSpacing,
-          }}
-          onMomentumScrollEnd={handleCarouselMomentumEndACB}
           onScroll={Animated.event(
             [{ nativeEvent: { contentOffset: { x: scrollX } } }],
             { useNativeDriver: true }
           )}
-          scrollEventThrottle={16}
-          onScrollToIndexFailed={function handleScrollFailACB() {
-            requestAnimationFrame(function retryScrollACB() {
-              flatListRef.current?.scrollToIndex({
-                index: shouldLoop ? 1 : 0,
-                animated: false,
-              });
-            });
-          }}
         />
       </View>
-    </View>
+
+      <Text style={styles.sectionTitle}>Local News</Text>
+
+      <View style={styles.newsSection}>
+        {newsItems.length ? (
+          newsItems.map(renderNewsItemACB)
+        ) : (
+          <Text style={styles.emptyNewsText}>
+            No important local news for tourist areas right now.
+          </Text>
+        )}
+      </View>
+    </ScrollView>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    paddingTop: 16,
     backgroundColor: "#f8fafc",
+  },
+  contentContainer: {
+    paddingTop: 16,
+    paddingBottom: 28,
   },
   mapSection: {
     marginHorizontal: 16,
@@ -325,5 +356,58 @@ const styles = StyleSheet.create({
   },
   cardWrapper: {
     paddingBottom: 18,
+  },
+  newsSection: {
+    marginHorizontal: 16,
+    marginBottom: 12,
+  },
+  newsCard: {
+    backgroundColor: "#ffffff",
+    borderRadius: 14,
+    padding: 14,
+    marginBottom: 12,
+    borderWidth: 1,
+    borderColor: "#e5e7eb",
+  },
+  newsHeader: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    marginBottom: 8,
+  },
+  newsBadge: {
+    fontSize: 12,
+    fontWeight: "700",
+    color: "#0f766e",
+    backgroundColor: "#ccfbf1",
+    paddingHorizontal: 8,
+    paddingVertical: 4,
+    borderRadius: 999,
+  },
+  newsSeverity: {
+    fontSize: 12,
+    fontWeight: "700",
+    color: "#b45309",
+  },
+  newsTitle: {
+    fontSize: 16,
+    fontWeight: "700",
+    color: "#111827",
+    marginBottom: 6,
+  },
+  newsDescription: {
+    fontSize: 14,
+    color: "#4b5563",
+    lineHeight: 20,
+  },
+  newsMeta: {
+    marginTop: 10,
+    fontSize: 12,
+    color: "#6b7280",
+  },
+  emptyNewsText: {
+    color: "#6b7280",
+    fontSize: 14,
+    lineHeight: 20,
   },
 });

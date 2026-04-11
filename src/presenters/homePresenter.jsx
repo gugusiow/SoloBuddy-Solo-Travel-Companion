@@ -20,7 +20,7 @@ const HomePresenter = observer(function HomePresenter(props) {
   const model = props.model;
 
   async function userWantsToRefreshDataACB() {
-    model.setLoading(true);
+    model.setLoading?.(true);
 
     try {
       const baseAttractions =
@@ -41,11 +41,42 @@ const HomePresenter = observer(function HomePresenter(props) {
         },
       ];
 
-      model.setWeatherAlerts(mockAlerts);
+      const mockTouristNews = [
+        {
+          id: 1,
+          area: "Gamla Stan",
+          severity: "Advisory",
+          title: "Large weekend crowds expected in the old town",
+          summary:
+            "Visitors are advised to keep bags zipped and valuables secure in busy squares and narrow streets.",
+          publishedAt: "Updated 2h ago",
+        },
+        {
+          id: 2,
+          area: "Djurgården",
+          severity: "Transport",
+          title: "Ferry and tram delays affecting museum routes",
+          summary:
+            "Some routes to major attractions may take longer than usual during peak visitor hours.",
+          publishedAt: "Updated 45m ago",
+        },
+        {
+          id: 3,
+          area: "Södermalm",
+          severity: "Crowds",
+          title: "Evening congestion near popular nightlife streets",
+          summary:
+            "Travelers should expect denser foot traffic and plan pickup points in advance after dark.",
+          publishedAt: "Updated 1h ago",
+        },
+      ];
+
+      model.setWeatherAlerts?.(mockAlerts);
+      model.setTouristNews?.(mockTouristNews);
     } catch (error) {
       console.error("Failed to fetch attraction data:", error);
     } finally {
-      model.setLoading(false);
+      model.setLoading?.(false);
     }
   }
 
@@ -62,9 +93,11 @@ const HomePresenter = observer(function HomePresenter(props) {
 
   return (
     <HomeView
-      loadingStatus={model.loading}
-      weatherAlerts={model.weatherAlerts}
       attractions={model.attractions || []}
+      weatherAlerts={model.weatherAlerts || []}
+      touristNews={model.touristNews || []}
+      currentAttraction={model.currentAttraction}
+      loadingStatus={model.loadingStatus}
       onRefresh={userWantsToRefreshDataACB}
       onSelectAttraction={userWantsToSelectAttractionACB}
     />

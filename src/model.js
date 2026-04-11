@@ -14,6 +14,9 @@ class AppModel {
   weatherAlerts = [];
   loadingStatus = false;
 
+  // news and safety data? 
+  touristNews = [];
+
   // auth state
   currentUser = null;
   profile = null;
@@ -33,6 +36,10 @@ class AppModel {
   setWeatherAlerts(alerts) {
     this.weatherAlerts = alerts;
   }
+
+  setTouristNews(news) {
+    this.touristNews = news;
+  } 
 
   setCurrentUser(user) {
     this.currentUser = user;

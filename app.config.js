@@ -25,11 +25,26 @@ export default {
           apiKey: process.env.EXPO_PUBLIC_GOOGLE_API_KEY,
         },
       },
+      "package": "com.anonymous.project",
     },
     web: {
       bundler: "metro",
       output: "static",
     },
-    plugins: ["expo-router", "expo-location"],
+    plugins: [
+      "expo-router",
+      [
+        "expo-location",
+        {
+          locationWhenInUsePermission: "Show current location on map.",
+        },
+      ],
+      [
+        "@rnmapbox/maps",
+        {
+          RNMapboxMapsVersion: "11.20.1",
+        },
+      ],
+    ],
   },
 };

@@ -8,7 +8,7 @@ const HomePresenter = observer(function HomePresenter(props) {
     model.setLoading(true);
     
     try {
-      // set an artificical delay
+      // set an artificical delay for now
       await new Promise(function resolveAfterDelay(resolve) {
         setTimeout(resolve, 2000);
       });

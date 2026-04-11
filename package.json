@@ -6,13 +6,18 @@
     "dev_clear": "expo start --clear"
   },
   "dependencies": {
+    "@rnmapbox/maps": "^10.3.0",
     "expo": "~55.0.4",
+    "expo-image-picker": "~55.0.18",
     "expo-location": "~55.1.4",
     "expo-router": "~55.0.2",
     "firebase": "latest",
+    "mapbox-gl": "^2.15.0",
     "mobx": "~6.15.0",
     "mobx-react-lite": "~4.1.1",
     "react": "~19.2.0",
+    "react-dom": "^19.2.5",
+    "react-map-gl": "^8.1.1",
     "react-native": "~0.83.2",
     "react-native-maps": "1.27.2",
     "react-native-safe-area-context": "~5.6.0",
@@ -21,8 +26,11 @@
   },
   "devDependencies": {
     "@babel/core": "~7.28.5",
+    "@types/react": "~19.2.10",
+    "babel-plugin-module-resolver": "~5.0.2",
     "babel-preset-expo": "~55.0.10",
-    "babel-plugin-module-resolver": "~5.0.2"
+    "expo-module-scripts": "^55.0.2",
+    "typescript": "~5.9.2"
   },
   "private": true
 }

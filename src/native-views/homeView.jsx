@@ -1,6 +1,7 @@
 import React, { useRef, useState, useEffect } from "react";
-import { View, Text, FlatList, StyleSheet, Button, Animated, Dimensions, Pressable } from "react-native";
+import { View, Text, StyleSheet, Button, Animated, Dimensions, Pressable } from "react-native";
 import { AttractionCard } from "./attractionCard";
+import { AttractionsMap } from "./attractionsMap";
 
 export function HomeView(props) {
   // added some variables to use for attraction card animation
@@ -88,9 +89,11 @@ export function HomeView(props) {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.mapText}>Insert Map here next timeee 🗺🗾</Text>
+      <View style={styles.mapSection}>
+        <AttractionsMap attractions={props.attractions} />
+      </View>
 
-      {props.loadingStatus ? (<Text>Loading safety data...</Text>) : (props.weatherAlerts.map(renderAlertACB))}
+      {props.loadingStatus ? (<Text>Loading safety data...</Text>) : (visibleAlerts.map(renderAlertACB))}
 
       {/* When clicked, it calls the ACB defined in the Presenter */}
       <Button title="Check Area Safety" onPress={props.onRefreshData} />
@@ -131,11 +134,12 @@ const styles = StyleSheet.create({
     flex: 1,
     paddingTop: 16,
   },
-  mapText: {
-    fontSize: 18,
-    color: "#555",
+  mapSection: {
     marginHorizontal: 16,
     marginBottom: 12,
+    borderRadius: 14,
+    overflow: "hidden",
+    height: 420,
   },
   loadingText: {
     marginHorizontal: 16,
@@ -151,6 +155,27 @@ const styles = StyleSheet.create({
   alertTitle: {
     color: "#991b1b",
     fontWeight: "bold",
+  },
+  alertHeader: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    marginBottom: 6,
+  },
+  closeButton: {
+    width: 24,
+    height: 24,
+    borderRadius: 12,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  closeButtonText: {
+    fontSize: 16,
+    color: "#991b1b",
+    fontWeight: "700",
+  },
+  alertDescription: {
+    color: "#7f1d1d",
   },
   buttonWrapper: {
     marginTop: 14,

@@ -1,26 +1,11 @@
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useMemo } from "react";
 import { StyleSheet, Text, View } from "react-native";
-import Map, { Marker } from "react-map-gl/mapbox";
+import { APIProvider, Map, AdvancedMarker } from "@vis.gl/react-google-maps";
 
-const MAPBOX_TOKEN = process.env.EXPO_PUBLIC_MAPBOX_ACCESS_TOKEN;
+const GOOGLE_API_KEY = process.env.EXPO_PUBLIC_GOOGLE_API_KEY;
 
-// this is for the web, but like Leo said, we should focus on mobile app. I just added this to make it easier to visualise on my PC
+// web map using Google Maps via @vis.gl/react-google-maps
 export function AttractionsMap({ attractions }) {
-  useEffect(function loadMapboxCssACB() {
-    const styleTagId = "mapbox-gl-css";
-    const existingTag = document.getElementById(styleTagId);
-
-    if (existingTag) {
-      return;
-    }
-
-    const link = document.createElement("link");
-    link.id = styleTagId;
-    link.rel = "stylesheet";
-    link.href = "https://api.mapbox.com/mapbox-gl-js/v3.15.0/mapbox-gl.css";
-    document.head.appendChild(link);
-  }, []);
-
   const mappableAttractions = useMemo(function getMappableAttractionsACB() {
     return (attractions || []).filter(function hasCoordinatesACB(attraction) {
       return (
@@ -32,78 +17,56 @@ export function AttractionsMap({ attractions }) {
 
   const center = useMemo(function computeCenterACB() {
     if (!mappableAttractions.length) {
-      return { latitude: 20, longitude: 0 };
+      return { lat: 20, lng: 0 };
     }
 
     const total = mappableAttractions.reduce(
       function addCoordinatesACB(acc, attraction) {
         return {
-          latitude: acc.latitude + attraction.latitude,
-          longitude: acc.longitude + attraction.longitude,
+          lat: acc.lat + attraction.latitude,
+          lng: acc.lng + attraction.longitude,
         };
       },
-      { latitude: 0, longitude: 0 }
+      { lat: 0, lng: 0 }
     );
 
     return {
-      latitude: total.latitude / mappableAttractions.length,
-      longitude: total.longitude / mappableAttractions.length,
+      lat: total.lat / mappableAttractions.length,
+      lng: total.lng / mappableAttractions.length,
     };
   }, [mappableAttractions]);
 
-  const [viewState, setViewState] = useState({
-    longitude: center.longitude,
-    latitude: center.latitude,
-    zoom: 3,
-  });
-
-  useEffect(
-    function syncCenterToDataACB() {
-      setViewState(function updateViewStateACB(previous) {
-        return {
-          ...previous,
-          longitude: center.longitude,
-          latitude: center.latitude,
-          zoom: mappableAttractions.length > 0 ? 11 : 3,
-        };
-      });
-    },
-    [center.longitude, center.latitude, mappableAttractions.length]
-  );
-
-  if (!MAPBOX_TOKEN) {
+  if (!GOOGLE_API_KEY) {
     return (
       <View style={[styles.map, styles.messageContainer]}>
         <Text style={styles.messageText}>
-          Add EXPO_PUBLIC_MAPBOX_ACCESS_TOKEN to your env file to load the map.
+          Add EXPO_PUBLIC_GOOGLE_API_KEY to your env file to load the map.
         </Text>
       </View>
     );
   }
 
   return (
-    <Map
-      {...viewState}
-      onMove={(event) => setViewState(event.viewState)}
-      mapboxAccessToken={MAPBOX_TOKEN}
-      mapStyle="mapbox://styles/mapbox/streets-v12"
-      style={styles.map}
-    >
-      {mappableAttractions.map(function renderMarkerACB(attraction) {
-        return (
-          <Marker
-            key={attraction.id.toString()}
-            longitude={attraction.longitude}
-            latitude={attraction.latitude}
-            anchor="bottom"
-          >
-            <View style={styles.marker}>
-              <Text style={styles.markerEmoji}>📍</Text>
-            </View>
-          </Marker>
-        );
-      })}
-    </Map>
+    <View style={styles.map}>
+      <APIProvider apiKey={GOOGLE_API_KEY}>
+        <Map
+          style={{ width: "100%", height: "100%" }}
+          defaultCenter={center}
+          defaultZoom={mappableAttractions.length > 0 ? 11 : 3}
+          mapId="attractions-map"
+        >
+          {mappableAttractions.map(function renderMarkerACB(attraction) {
+            return (
+              <AdvancedMarker
+                key={String(attraction.id ?? attraction.name)}
+                position={{ lat: attraction.latitude, lng: attraction.longitude }}
+                title={attraction.name}
+              />
+            );
+          })}
+        </Map>
+      </APIProvider>
+    </View>
   );
 }
 
@@ -120,19 +83,5 @@ const styles = StyleSheet.create({
   messageText: {
     color: "#374151",
     fontSize: 14,
-  },
-  marker: {
-    width: 26,
-    height: 26,
-    borderRadius: 13,
-    backgroundColor: "#ffffff",
-    alignItems: "center",
-    justifyContent: "center",
-    borderWidth: 1,
-    borderColor: "#d1d5db",
-  },
-  markerEmoji: {
-    fontSize: 14,
-    lineHeight: 18,
   },
 });

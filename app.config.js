@@ -7,8 +7,8 @@ export default {
     orientation: "portrait",
     scheme: "project",
     userInterfaceStyle: "automatic",
-    newArchEnabled: true,
     ios: {
+      newArchEnabled: true,
       supportsTablet: true,
       bundleIdentifier: "com.anonymous.project",
       config: {
@@ -16,6 +16,7 @@ export default {
       },
     },
     android: {
+      newArchEnabled: false,
       adaptiveIcon: {
         backgroundColor: "#ffffff",
       },
@@ -37,12 +38,6 @@ export default {
         "expo-location",
         {
           locationWhenInUsePermission: "Show current location on map.",
-        },
-      ],
-      [
-        "@rnmapbox/maps",
-        {
-          RNMapboxMapsVersion: "11.20.1",
         },
       ],
       [

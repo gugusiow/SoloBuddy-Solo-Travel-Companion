@@ -40,12 +40,6 @@ export default {
           locationWhenInUsePermission: "Show current location on map.",
         },
       ],
-      [
-        "react-native-maps",
-        {
-          androidGoogleMapsApiKey: process.env.EXPO_PUBLIC_GOOGLE_API_KEY,
-        },
-      ],
     ],
   },
 };

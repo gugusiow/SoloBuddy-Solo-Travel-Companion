@@ -63,9 +63,7 @@ export function AttractionsMap({ attractions }) {
           return;
         }
 
-        const position = await Location.getCurrentPositionAsync({
-          accuracy: Location.Accuracy.Balanced,
-        });
+        const position = await Location.getLastKnownPositionAsync();
 
         if (!isMounted) {
           return;

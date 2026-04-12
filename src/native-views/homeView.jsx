@@ -95,6 +95,15 @@ export function HomeView(props) {
     setWeatherModalVisible(false);
   }
 
+
+  function getUvColorACB(uvIndex) {
+    if (uvIndex == null || uvIndex <= 2) return "#22c55e";
+    if (uvIndex <= 5) return "#eab308";
+    if (uvIndex <= 7) return "#f97316";
+    if (uvIndex <= 10) return "#ef4444";
+    return "#dc2626";
+  }
+
   function renderWeatherMetricACB(label, value) {
     return (
       <View key={label} style={styles.weatherMetricCard}>
@@ -379,17 +388,41 @@ export function HomeView(props) {
               contentContainerStyle={styles.weatherModalContent}
             >
               <View style={styles.weatherHeroCard}>
-                <Text style={styles.weatherHeroEyebrow}>Current weather</Text>
-                <Text style={styles.weatherHeroTemp}>
-                  {weather?.temperature ?? "--"}°{weather?.unit || "C"}
-                </Text>
-                <Text style={styles.weatherHeroCondition}>
-                  {weather?.condition || "Unavailable"}
-                </Text>
-                <Text style={styles.weatherHeroRange}>
-                  H: {weather?.high ?? "--"}°   L: {weather?.low ?? "--"}°
-                </Text>
+                <View style={styles.weatherHeroRow}>
+                  <View>
+                    <Text style={styles.weatherHeroEyebrow}>Current weather</Text>
+                    <Text style={styles.weatherHeroTemp}>
+                      {weather?.temperature ?? "--"}°{weather?.unit || "C"}
+                    </Text>
+                    <Text style={styles.weatherHeroCondition}>
+                      {weather?.condition || "Unavailable"}
+                    </Text>
+                  </View>
+                  <View style={styles.weatherHeroRight}>
+                    <Text style={styles.weatherHeroRange}>
+                      H: {weather?.high ?? "--"}°  L: {weather?.low ?? "--"}°
+                    </Text>
+                    {weather?.feelsLike != null && (
+                      <Text style={styles.weatherHeroFeelsLike}>
+                        Feels like {weather.feelsLike}°
+                      </Text>
+                    )}
+                    {weather?.precipitationChance != null && (
+                      <Text style={styles.weatherHeroPrecip}>
+                        💧 {weather.precipitationChance}% rain
+                      </Text>
+                    )}
+                  </View>
+                </View>
               </View>
+
+              {weather?.precipitationChance >= 50 && (
+                <View style={styles.umbrellaTip}>
+                  <Text style={styles.umbrellaTipText}>
+                    ☂️  {weather.precipitationChance}% chance of rain. Rmb to bring an umbrella!
+                  </Text>
+                </View>
+              )}
 
               {props.weatherDetailsLoading ? (
                 <View style={styles.weatherLoadingBlock}>
@@ -401,7 +434,7 @@ export function HomeView(props) {
               ) : (
                 <>
                   <View style={styles.weatherMetricsGrid}>
-                    <View style={styles.weatherMetricCard}>
+                    <View style={[styles.weatherMetricCard, styles.uvMetricCard]}>
                       <Text style={styles.weatherMetricLabel}>UV index</Text>
                       <Text style={styles.weatherMetricDescription}>
                         {weather?.uvLabel ? `${weather.uvLabel} right now` : "Unavailable"}
@@ -416,13 +449,14 @@ export function HomeView(props) {
                             styles.uvBarFill,
                             {
                               width: `${Math.min(((weather?.uvIndex ?? 0) / 11) * 100, 100)}%`,
+                              backgroundColor: getUvColorACB(weather?.uvIndex),
                             },
                           ]}
                         />
                       </View>
                     </View>
 
-                    <View style={styles.weatherMetricCard}>
+                    <View style={[styles.weatherMetricCard, styles.humidityMetricCard]}>
                       <Text style={styles.weatherMetricLabel}>Humidity</Text>
                       <Text style={styles.weatherMetricDescription}>
                         {weather?.humidity != null
@@ -445,7 +479,7 @@ export function HomeView(props) {
                       </View>
                     </View>
 
-                    <View style={styles.weatherMetricCard}>
+                    <View style={[styles.weatherMetricCard, styles.windMetricCard]}>
                       <Text style={styles.weatherMetricLabel}>Wind</Text>
                       <Text style={styles.weatherMetricDescription}>
                         {weather?.windSpeed ? "Current wind speed" : "Unavailable"}
@@ -455,7 +489,7 @@ export function HomeView(props) {
                       </Text>
                     </View>
 
-                    <View style={styles.weatherMetricCard}>
+                    <View style={[styles.weatherMetricCard, styles.aqiMetricCard]}>
                       <Text style={styles.weatherMetricLabel}>Air quality</Text>
                       <Text style={styles.weatherMetricDescription}>
                         {weather?.airQuality?.label || "Unavailable"}

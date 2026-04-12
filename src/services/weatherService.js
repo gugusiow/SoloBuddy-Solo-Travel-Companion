@@ -130,6 +130,35 @@ function mapDailyForecastACB(forecastDays) {
   });
 }
 
+export async function fetchAirQualityACB(latitude, longitude) {
+  const url =
+    `https://airquality.googleapis.com/v1/currentConditions:lookup` +
+    `?key=${GOOGLE_WEATHER_API_KEY}`;
+
+  const response = await fetch(url, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      location: { latitude, longitude },
+      universalAqi: true,
+    }),
+  });
+
+  if (!response.ok) {
+    return null;
+  }
+
+  const data = await response.json();
+  const index = data.indexes?.[0];
+
+  if (!index) return null;
+
+  return {
+    aqi: index.aqi,
+    label: index.category || getAirQualityLabelACB(index.aqi),
+  };
+}
+
 export async function fetchCurrentWeatherACB(latitude, longitude) {
   const url =
     "https://weather.googleapis.com/v1/currentConditions:lookup" +
@@ -173,17 +202,13 @@ export async function fetchWeatherBannerACB(latitude, longitude) {
 
 // get some more weather details like UV and wind speed
 export async function fetchWeatherDetailsACB(latitude, longitude) {
-  const [currentData, dailyData] = await Promise.all([
+  const [currentData, dailyData, airQuality] = await Promise.all([
     fetchCurrentWeatherACB(latitude, longitude),
     fetchDailyForecastACB(latitude, longitude, 7),
+    fetchAirQualityACB(latitude, longitude),
   ]);
 
   const today = dailyData.forecastDays?.[0];
-  const airQualityIndex =
-    currentData.airQuality?.index ??
-    currentData.airQuality?.aqi ??
-    currentData.airQuality?.universalAqi ??
-    null;
 
   return {
     temperature: roundDegreesACB(currentData.temperature?.degrees),
@@ -225,13 +250,7 @@ export async function fetchWeatherDetailsACB(latitude, longitude) {
     sunrise: formatClockTimeACB(today?.sunEvents?.sunriseTime),
     sunset: formatClockTimeACB(today?.sunEvents?.sunsetTime),
 
-    airQuality:
-      airQualityIndex != null
-        ? {
-            aqi: Math.round(airQualityIndex),
-            label: getAirQualityLabelACB(Math.round(airQualityIndex)),
-          }
-        : null,
+    airQuality,
 
     dailyForecast: mapDailyForecastACB(dailyData.forecastDays),
   };

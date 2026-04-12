@@ -21,28 +21,28 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
   },
   weatherDay: {
-    backgroundColor: "#dbeafe",
+    backgroundColor: "#0ea5e9",
   },
   weatherNight: {
-    backgroundColor: "#112d5b",
+    backgroundColor: "#1e1b4b",
   },
   weatherEyebrow: {
     fontSize: 12,
     fontWeight: "700",
     textTransform: "uppercase",
     letterSpacing: 0.6,
-    color: "#475569",
+    color: "rgba(255,255,255,0.75)",
   },
   weatherTemp: {
     marginTop: 4,
     fontSize: 30,
     fontWeight: "800",
-    color: "#0f172a",
+    color: "#ffffff",
   },
   weatherCondition: {
     marginTop: 4,
     fontSize: 14,
-    color: "#334155",
+    color: "rgba(255,255,255,0.9)",
   },
   weatherAside: {
     alignItems: "flex-end",
@@ -53,7 +53,7 @@ const styles = StyleSheet.create({
   weatherRangeLabel: {
     fontSize: 12,
     fontWeight: "700",
-    color: "#475569",
+    color: "rgba(255,255,255,0.75)",
     textTransform: "uppercase",
     letterSpacing: 0.6,
   },
@@ -61,7 +61,7 @@ const styles = StyleSheet.create({
     marginTop: 6,
     fontSize: 15,
     fontWeight: "700",
-    color: "#0f172a",
+    color: "#ffffff",
   },
   mapSection: {
     marginHorizontal: 16,
@@ -221,8 +221,8 @@ const styles = StyleSheet.create({
   weatherTapHint: {
     marginTop: 8,
     fontSize: 12,
-    fontWeight: "700",
-    color: "#475569",
+    fontWeight: "600",
+    color: "rgba(255,255,255,0.7)",
   },
   modalBackdrop: {
     flex: 1,
@@ -236,7 +236,7 @@ const styles = StyleSheet.create({
   // weather stuff
   weatherModalSheet: {
     maxHeight: "88%",
-    backgroundColor: "#163b97",
+    backgroundColor: "#060d1f",
     borderTopLeftRadius: 28,
     borderTopRightRadius: 28,
     paddingTop: 16,
@@ -271,10 +271,45 @@ const styles = StyleSheet.create({
     paddingBottom: 30,
   },
   weatherHeroCard: {
-    backgroundColor: "rgba(8, 26, 79, 0.45)",
+    backgroundColor: "rgba(255,255,255,0.08)",
+    borderWidth: 1,
+    borderColor: "rgba(255,255,255,0.12)",
     borderRadius: 24,
     padding: 20,
     marginBottom: 14,
+  },
+  weatherHeroRow: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "flex-start",
+  },
+  weatherHeroRight: {
+    alignItems: "flex-end",
+    justifyContent: "flex-start",
+    paddingTop: 6,
+    gap: 6,
+  },
+  weatherHeroFeelsLike: {
+    fontSize: 13,
+    color: "rgba(255,255,255,0.7)",
+  },
+  weatherHeroPrecip: {
+    fontSize: 13,
+    color: "rgba(255,255,255,0.7)",
+  },
+  umbrellaTip: {
+    backgroundColor: "rgba(14,165,233,0.2)",
+    borderWidth: 1,
+    borderColor: "rgba(14,165,233,0.35)",
+    borderRadius: 14,
+    paddingHorizontal: 14,
+    paddingVertical: 10,
+    marginBottom: 14,
+  },
+  umbrellaTipText: {
+    color: "#ffffff",
+    fontSize: 14,
+    fontWeight: "600",
   },
   weatherHeroEyebrow: {
     fontSize: 12,
@@ -318,16 +353,29 @@ const styles = StyleSheet.create({
   weatherMetricCard: {
     width: "48%",
     minHeight: 210,
-    backgroundColor: "#204db6",
+    backgroundColor: "rgba(255,255,255,0.1)",
+    borderWidth: 1,
+    borderColor: "rgba(255,255,255,0.12)",
     borderRadius: 26,
     padding: 18,
     marginBottom: 12,
     justifyContent: "space-between",
-    shadowColor: "#0b1f57",
-    shadowOpacity: 0.35,
-    shadowRadius: 18,
-    shadowOffset: { width: 0, height: 10 },
-    elevation: 8,
+  },
+  uvMetricCard: {
+    backgroundColor: "rgba(251,191,36,0.18)",
+    borderColor: "rgba(251,191,36,0.25)",
+  },
+  humidityMetricCard: {
+    backgroundColor: "rgba(14,165,233,0.18)",
+    borderColor: "rgba(14,165,233,0.25)",
+  },
+  windMetricCard: {
+    backgroundColor: "rgba(148,163,184,0.18)",
+    borderColor: "rgba(148,163,184,0.25)",
+  },
+  aqiMetricCard: {
+    backgroundColor: "rgba(34,197,94,0.18)",
+    borderColor: "rgba(34,197,94,0.25)",
   },
   weatherMetricLabel: {
     fontSize: 12,
@@ -361,7 +409,6 @@ const styles = StyleSheet.create({
   uvBarFill: {
     height: "100%",
     borderRadius: 999,
-    backgroundColor: "#facc15",
   },
   humidityBarTrack: {
     height: 18,
@@ -388,7 +435,9 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
-    backgroundColor: "rgba(8, 26, 79, 0.45)",
+    backgroundColor: "rgba(255,255,255,0.08)",
+    borderWidth: 1,
+    borderColor: "rgba(255,255,255,0.1)",
     borderRadius: 16,
     paddingHorizontal: 14,
     paddingVertical: 12,
@@ -414,38 +463,12 @@ const styles = StyleSheet.create({
     fontSize: 14,
     lineHeight: 20,
   },
-  weatherMetricDescription: {
-    marginTop: 8,
-    fontSize: 15,
-    lineHeight: 22,
-    color: "rgba(255,255,255,0.9)",
-  },
-  uvBarTrack: {
-    height: 18,
-    borderRadius: 999,
-    backgroundColor: "rgba(255,255,255,0.18)",
-    overflow: "hidden",
-  },
-  uvBarFill: {
-    height: "100%",
-    borderRadius: 999,
-    backgroundColor: "#facc15",
-  },
-  humidityBarTrack: {
-    height: 18,
-    borderRadius: 999,
-    backgroundColor: "rgba(255,255,255,0.18)",
-    overflow: "hidden",
-  },
-  humidityBarFill: {
-    height: "100%",
-    borderRadius: 999,
-    backgroundColor: "#7dd3fc",
-  },
   sunCard: {
     height: 250,
     width: "100%",
-    backgroundColor: "rgba(8, 26, 79, 0.45)",
+    backgroundColor: "rgba(255,255,255,0.08)",
+    borderWidth: 1,
+    borderColor: "rgba(255,255,255,0.12)",
     borderRadius: 26,
     paddingHorizontal: 18,
     paddingBottom: 20,

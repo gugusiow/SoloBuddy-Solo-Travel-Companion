@@ -2,6 +2,7 @@ import { useEffect } from "react";
 import { observer } from "mobx-react-lite";
 import * as Location from "expo-location";
 import { HomeView } from "../native-views/homeView.jsx";
+import { reverseGeocodeACB } from "../services/googleMapsService.js";
 
 
 const HomePresenter = observer(function HomePresenter(props) {
@@ -75,39 +76,15 @@ const HomePresenter = observer(function HomePresenter(props) {
 
   async function userWantsToRefreshNewsACB() {
     try {
-      const mockTouristNews = [
-        {
-          id: 1,
-          area: "Gamla Stan",
-          severity: "Advisory",
-          title: "Large weekend crowds expected in the old town",
-          summary:
-            "Visitors are advised to keep bags zipped and valuables secure in busy squares and narrow streets.",
-          publishedAt: "Updated recently",
-        },
-        {
-          id: 2,
-          area: "Djurgården",
-          severity: "Transport",
-          title: "Ferry delays affecting museum routes",
-          summary:
-            "Some ferry departures may run late during peak sightseeing hours.",
-          publishedAt: "Updated 1h ago",
-        },
-        {
-          id: 3,
-          area: "Södermalm",
-          severity: "Crowds",
-          title: "Evening congestion near nightlife streets",
-          summary:
-            "Travelers should expect denser foot traffic and plan pickup points ahead of time.",
-          publishedAt: "Updated 45m ago",
-        },
-      ];
-      model.setTouristNews?.(mockTouristNews);
+      const location = model.currentLocation;
+      if (!location) return;
+      const city = await reverseGeocodeACB(location.latitude, location.longitude);
+      console.log("[news] city:", city);
+      if (!city) return;
+      // change here for different query.... but search results arent rlly good tbvh
+      model.fetchNews(`${city} AND (safety OR crime OR tourist)`);
     } catch (error) {
-      console.error("Failed to refresh tourist news:", error);
-      model.setTouristNews?.([]);
+      console.error("Failed to refresh news:", error);
     }
   }
 
@@ -186,7 +163,7 @@ const HomePresenter = observer(function HomePresenter(props) {
       weatherAlerts={model.weatherAlerts || []}
       weatherDetailsLoading={weatherDetailsLoading}
       onOpenWeatherDetails={userWantsToOpenWeatherDetailsACB}
-      touristNews={model.touristNews || []}
+      touristNews={model.newsPromiseState.data || []}
       loadingStatus={model.loadingStatus}
       onRefreshSafetyAlerts={userWantsToRefreshSafetyAlertsACB}
       onRefreshNews={userWantsToRefreshNewsACB}

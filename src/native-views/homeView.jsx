@@ -9,6 +9,7 @@ import {
   Modal,
   ActivityIndicator,
 } from "react-native";
+import { openURL } from "expo-linking";
 import Svg, { Defs, LinearGradient, Stop, Path, Circle } from "react-native-svg";
 import { AttractionCard } from "./attractionCard";
 import { AttractionsMap } from "./attractionsMap";
@@ -24,6 +25,7 @@ export function HomeView(props) {
   const [visibleAlerts, setVisibleAlerts] = useState([]);
   const [weatherModalVisible, setWeatherModalVisible] = useState(false);
   const [attractionModalVisible, setAttractionModalVisible] = useState(false);
+  const [visibleNewsCount, setVisibleNewsCount] = useState(4);
 
   const baseAttractions = props.attractions || [];
   const newsItems = props.touristNews || [];
@@ -206,7 +208,11 @@ export function HomeView(props) {
 
   function renderNewsItemACB(item, index) {
     return (
-      <View key={`${item.id ?? "news"}-${index}`} style={styles.newsCard}>
+      <Pressable
+        key={`${item.id ?? "news"}-${index}`}
+        style={styles.newsCard}
+        onPress={function openNewsACB() { openURL(item.url); }}
+      >
         <View style={styles.newsHeader}>
           <Text style={styles.newsBadge}>{item.area}</Text>
           <Text style={styles.newsSeverity}>{item.severity}</Text>
@@ -218,7 +224,7 @@ export function HomeView(props) {
         {!!item.publishedAt && (
           <Text style={styles.newsMeta}>{item.publishedAt}</Text>
         )}
-      </View>
+      </Pressable>
     );
   }
 
@@ -412,10 +418,23 @@ export function HomeView(props) {
             <Text style={styles.newsRefreshIcon}>↻</Text>
           </Pressable>
         </View>
-
+        {/* show more stuff button impelmentation */}
+             {/* render first 4 newss, "Show more" button appears if got hidden items, show more to ++ 4, */}
         <View style={styles.newsSection}>
           {newsItems.length ? (
-            newsItems.map(renderNewsItemACB)
+            <>
+              {newsItems.slice(0, visibleNewsCount).map(renderNewsItemACB)}
+              {visibleNewsCount < newsItems.length && (
+                <Pressable
+                  onPress={() => setVisibleNewsCount(visibleNewsCount + 4)}
+                  style={({ pressed }) => [styles.newsShowMoreButton, pressed && styles.refreshButtonPressed]}
+                >
+                  <Text style={styles.newsShowMoreText}>
+                    Show more
+                  </Text>
+                </Pressable>
+              )}
+            </>
           ) : (
             <Text style={styles.emptyNewsText}>
               No important local news for tourist areas right now.

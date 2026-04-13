@@ -130,6 +130,24 @@ export async function enrichAttractionWithCoordinates(attraction) {
   }
 }
 
+// to retrieve the city name of current location of userrr
+export async function reverseGeocodeACB(latitude, longitude) {
+  const url =
+    "https://maps.googleapis.com/maps/api/geocode/json?" +
+    `latlng=${latitude},${longitude}&key=${GOOGLE_MAPS_API_KEY}`;
+
+  const response = await fetch(url);
+  const data = await response.json();
+  const components = data.results?.[0]?.address_components || [];
+
+  const locality = components.find((c) => c.types.includes("locality"));
+  const fallback = components.find((c) =>
+    c.types.includes("administrative_area_level_1")
+  );
+
+  return locality?.long_name ?? fallback?.long_name ?? null;
+}
+
 export async function enrichAttractionsWithCoordinates(attractions = []) {
   const enrichedAttractions = await Promise.all(
     attractions.map(enrichAttractionWithCoordinates)

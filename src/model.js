@@ -3,17 +3,9 @@ configure({ enforceActions: "never" });
 import { resolvePromise } from "./resolvePromise.js";
 import { fetchWeatherBannerACB, fetchWeatherDetailsACB, buildWeatherAlertsACB } from "./services/weatherService.js";
 import { fetchAttractionsACB, fetchPlaceDetailsACB } from "./services/placesService.js";
+import { fetchNewsACB } from "./services/newsService.js";
 
 class AppModel {
-  // keep this static data for now
-  attractions = [
-    { id: 1, name: "Eiffel Tower", location: "Paris, France", userRating: 4.2, latitude: 48.8584, longitude: 2.2945 },
-    { id: 2, name: "Colosseum", location: "Rome, Italy", userRating: 3.8, latitude: 41.8902, longitude: 12.4922 },
-    { id: 3, name: "Vasa Museum", location: "Stockholm, Sweden", userRating: 5.0, latitude: 59.3275, longitude: 18.0914 },
-    { id: 4, name: "Louvre Museum", location: "Paris, France", userRating: 4.2, latitude: 48.8606, longitude: 2.3376 },
-    { id: 5, name: "Basílica de la Sagrada Família", location: "Barcelona, Spain", userRating: 4.0, latitude: 41.4036, longitude: 2.1744 },
-  ];
-
   // promise states for async data
   weatherBannerPromiseState = {};
   weatherDetailsPromiseState = {};
@@ -26,8 +18,8 @@ class AppModel {
   // weather alerts derived from weather data
   weatherAlerts = [];
 
-  // news and safety data? 
-  touristNews = [];
+  // news
+  newsPromiseState = {};
 
   // auth state
   currentUser = null;
@@ -66,6 +58,11 @@ class AppModel {
     resolvePromise(fetchAttractionsACB(lat, lng), this.attractionsPromiseState);
   }
 
+  // --- news ---
+  fetchNews(query) {
+    resolvePromise(fetchNewsACB(query), this.newsPromiseState);
+  }
+
   setCurrentAttraction(attraction) {
     this.currentAttraction = attraction;
   }
@@ -88,10 +85,6 @@ class AppModel {
   setWeatherAlerts(alerts) {
     this.weatherAlerts = alerts;
   }
-
-  setTouristNews(news) {
-    this.touristNews = news;
-  } 
 
   setCurrentUser(user) {
     this.currentUser = user;

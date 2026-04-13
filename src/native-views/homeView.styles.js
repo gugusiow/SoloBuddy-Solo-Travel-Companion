@@ -215,6 +215,18 @@ const styles = StyleSheet.create({
     fontSize: 14,
     lineHeight: 20,
   },
+  newsShowMoreButton: {
+    marginTop: 8,
+    paddingVertical: 12,
+    borderRadius: 12,
+    backgroundColor: "#f1f5f9",
+    alignItems: "center",
+  },
+  newsShowMoreText: {
+    fontSize: 14,
+    fontWeight: "600",
+    color: "#374151",
+  },
   weatherBannerPressed: {
     opacity: 0.92,
   },

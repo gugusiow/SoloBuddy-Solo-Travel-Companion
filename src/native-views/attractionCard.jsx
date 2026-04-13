@@ -2,10 +2,10 @@
 import React from "react";
 import { View, Text, StyleSheet, Image, Pressable } from "react-native";
 
-function getSafetyMeta(rating) {
+function getRatingMeta(rating) {
   if (rating >= 4.5) {
     return {
-      label: "Very safe",
+      label: "Highly Rated",
       badgeBackground: "#dcfce7",
       badgeText: "#166534",
     };
@@ -13,21 +13,21 @@ function getSafetyMeta(rating) {
 
   if (rating >= 3) {
     return {
-      label: "Use caution",
+      label: "Well Rated",
       badgeBackground: "#fef3c7",
       badgeText: "#92400e",
     };
   }
 
   return {
-    label: "Higher risk",
+    label: "Mixed Reviews",
     badgeBackground: "#fee2e2",
     badgeText: "#991b1b",
   };
 }
 
 export function AttractionCard({ attraction, onSeeMore, cardWidth }) {
-  const safety = getSafetyMeta(attraction.safetyRating);
+  const safety = getRatingMeta(attraction.userRating);
 
   return (
     <View style={[styles.card, cardWidth ? { width: cardWidth } : null]}>
@@ -59,7 +59,7 @@ export function AttractionCard({ attraction, onSeeMore, cardWidth }) {
             ]}
           >
             <Text style={[styles.ratingBadgeText, { color: safety.badgeText }]}>
-              {attraction.safetyRating.toFixed(1)} ★
+              {attraction.userRating?.toFixed(1) ?? "N/A"} ★
             </Text>
           </View>
         </View>

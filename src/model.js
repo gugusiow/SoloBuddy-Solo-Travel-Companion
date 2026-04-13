@@ -1,16 +1,16 @@
 import { makeAutoObservable } from "mobx";
 import { resolvePromise } from "./resolvePromise.js";
 import { fetchWeatherBannerACB, fetchWeatherDetailsACB, buildWeatherAlertsACB } from "./services/weatherService.js";
-import { enrichAttractionsWithCoordinates } from "./services/googleMapsService.js";
+import { fetchAttractionsACB } from "./services/placesService.js";
 
 class AppModel {
   // keep this static data for now
   attractions = [
-    { id: 1, name: "Eiffel Tower", location: "Paris, France", safetyRating: 4.2, latitude: 48.8584, longitude: 2.2945 },
-    { id: 2, name: "Colosseum", location: "Rome, Italy", safetyRating: 3.8, latitude: 41.8902, longitude: 12.4922 },
-    { id: 3, name: "Vasa Museum", location: "Stockholm, Sweden", safetyRating: 5.0, latitude: 59.3275, longitude: 18.0914 },
-    { id: 4, name: "Louvre Museum", location: "Paris, France", safetyRating: 4.2, latitude: 48.8606, longitude: 2.3376 },
-    { id: 5, name: "Basílica de la Sagrada Família", location: "Barcelona, Spain", safetyRating: 4.0, latitude: 41.4036, longitude: 2.1744 },
+    { id: 1, name: "Eiffel Tower", location: "Paris, France", userRating: 4.2, latitude: 48.8584, longitude: 2.2945 },
+    { id: 2, name: "Colosseum", location: "Rome, Italy", userRating: 3.8, latitude: 41.8902, longitude: 12.4922 },
+    { id: 3, name: "Vasa Museum", location: "Stockholm, Sweden", userRating: 5.0, latitude: 59.3275, longitude: 18.0914 },
+    { id: 4, name: "Louvre Museum", location: "Paris, France", userRating: 4.2, latitude: 48.8606, longitude: 2.3376 },
+    { id: 5, name: "Basílica de la Sagrada Família", location: "Barcelona, Spain", userRating: 4.0, latitude: 41.4036, longitude: 2.1744 },
   ];
 
   // promise states for async data
@@ -57,8 +57,8 @@ class AppModel {
   }
 
   // --- attractions ---
-  fetchAttractions(baseAttractions) {
-    resolvePromise(enrichAttractionsWithCoordinates(baseAttractions), this.attractionsPromiseState);
+  fetchAttractions(lat, lng) {
+    resolvePromise(fetchAttractionsACB(lat, lng), this.attractionsPromiseState);
   }
 
   // setter

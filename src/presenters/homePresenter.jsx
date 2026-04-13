@@ -3,38 +3,6 @@ import { observer } from "mobx-react-lite";
 import * as Location from "expo-location";
 import { HomeView } from "../native-views/homeView.jsx";
 
-const mockAttractions = [
-  {
-    id: 1,
-    name: "Gamla Stan",
-    location: "Stockholm, Sweden",
-    safetyRating: 4.7,
-    imageUrl:
-      "https://images.unsplash.com/photo-1571580649299-7c5d76d4cb8c?auto=format&fit=crop&w=1200&q=80",
-    shortDescription:
-      "Historic old town with walkable streets, busy squares, and popular tourist spots.",
-  },
-  {
-    id: 2,
-    name: "Djurgården",
-    location: "Stockholm, Sweden",
-    safetyRating: 4.8,
-    imageUrl:
-      "https://images.unsplash.com/photo-1509356843151-3e7d96241e11?auto=format&fit=crop&w=1200&q=80",
-    shortDescription:
-      "Popular island park area with museums, waterfront paths, and family attractions.",
-  },
-  {
-    id: 3,
-    name: "Södermalm",
-    location: "Stockholm, Sweden",
-    safetyRating: 4.5,
-    imageUrl:
-      "https://images.unsplash.com/photo-1513635269975-59663e0ac1ad?auto=format&fit=crop&w=1200&q=80",
-    shortDescription:
-      "Trendy district with viewpoints, shopping streets, nightlife, and many visitors.",
-  },
-];
 
 const HomePresenter = observer(function HomePresenter(props) {
   const model = props.model;
@@ -68,7 +36,9 @@ const HomePresenter = observer(function HomePresenter(props) {
 
   async function userWantsToRefreshWeatherACB() {
     const location = await getUserLocationACB();
+    console.log("[weather] got location", location);
     model.fetchWeatherBanner(location.latitude, location.longitude);
+    console.log("[weather]", model.weatherBannerPromiseState);
   }
 
   async function userWantsToRefreshSafetyAlertsACB() {
@@ -145,7 +115,8 @@ const HomePresenter = observer(function HomePresenter(props) {
     model.setLoading?.(true);
     try {
       await userWantsToRefreshWeatherACB();
-      model.fetchAttractions(mockAttractions);
+      const location = await getUserLocationACB();
+      model.fetchAttractions(location.latitude, location.longitude);
 
       if (!model.weatherAlerts || model.weatherAlerts.length === 0) {
         model.updateWeatherAlerts();
@@ -193,7 +164,11 @@ const HomePresenter = observer(function HomePresenter(props) {
     <HomeView
       attractions={model.attractionsPromiseState.data || []}
       currentAttraction={model.currentAttraction}
-      currentWeather={model.weatherBannerPromiseState.data || model.weatherDetailsPromiseState.data}
+      currentWeather={
+        model.weatherBannerPromiseState.data
+          ? { ...model.weatherBannerPromiseState.data, ...(model.weatherDetailsPromiseState.data || {}) }
+          : null
+      }
       weatherAlerts={model.weatherAlerts || []}
       weatherDetailsLoading={weatherDetailsLoading}
       onOpenWeatherDetails={userWantsToOpenWeatherDetailsACB}

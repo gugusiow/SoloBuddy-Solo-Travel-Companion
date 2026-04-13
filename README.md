@@ -46,6 +46,20 @@ Once running, press `?` to see all options, then:
 NOTE: this will be fixed after mid proj review... for now do Step 3 for AppleMaps in IOS. 
 4. **Run a dev build (required for maps on Android)**
 
+   The `android/` and `ios/` folders are gitignored. You need to regenerate them first:
+
+   ```bash
+   npx expo prebuild
+   ```
+
+   Then create `android/local.properties` with Gmaps API key and add the Android SDK path if it is not added automatically. (can c&p API key from given .env file)
+
+   ```
+   GOOGLE_MAPS_API_KEY=your_google_api_key_here
+   ```
+
+   Then run:
+
    ```bash
    # Android (requires Android Studio + emulator)
    npx expo run:android

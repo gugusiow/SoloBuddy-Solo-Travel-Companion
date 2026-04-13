@@ -82,7 +82,7 @@ const HomePresenter = observer(function HomePresenter(props) {
       console.log("[news] city:", city);
       if (!city) return;
       // change here for different query.... but search results arent rlly good tbvh
-      model.fetchNews(`${city} AND (safety OR tourist attractions)`);
+      model.fetchNews(`${city} AND (safety OR tourist)`);
     } catch (error) {
       console.error("Failed to refresh news:", error);
     }

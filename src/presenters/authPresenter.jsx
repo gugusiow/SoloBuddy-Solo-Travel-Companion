@@ -1,7 +1,8 @@
 import { useState } from "react";
 import { observer } from "mobx-react-lite";
+import * as ImagePicker from "expo-image-picker";
 import { AuthView } from "/src/native-views/authView.jsx";
-import { signUpWithEmail, signInWithEmail, signOutUser } from "/src/firebaseModel.js";
+import { signUpWithEmail, signInWithEmail, signOutUser, saveUserProfile, uploadProfilePhoto } from "/src/firebaseModel.js";
 
 // handles both login, register, logout.
 //   props.model - the reactive MobX model
@@ -15,11 +16,54 @@ const AuthPresenter = observer(function AuthPresenter(props) {
     const [isRegisterMode, setIsRegisterMode] = useState(false);
     const [errorMessage, setErrorMessage] = useState(null);
 
+    // extra fields for registration
+    const [name, setName] = useState("");
+    const [birthday, setBirthday] = useState("");
+    const [phone, setPhone] = useState("");
+    const [avatarUri, setAvatarUri] = useState(null);
+    const [uploading, setUploading] = useState(false);
+
+    async function userChosePhotoACB() {
+        const permission = await ImagePicker.requestMediaLibraryPermissionsAsync();
+        if (!permission.granted) {
+            setErrorMessage("Permission to access photos was denied.");
+            return;
+        }
+        const result = await ImagePicker.launchImageLibraryAsync({
+            mediaTypes: ["images"],
+            allowsEditing: true,
+            aspect: [1, 1],
+            quality: 0.8,
+        });
+        if (!result.canceled && result.assets?.length) {
+            setAvatarUri(result.assets[0].uri);
+        }
+    }
+
     async function userSubmittedFormACB() {
         setErrorMessage(null);
         try {
             if (isRegisterMode) {
-                await signUpWithEmail(email, password);
+                const credential = await signUpWithEmail(email, password);
+                const uid = credential.user.uid;
+
+                let avatarUrl = "";
+                if (avatarUri) {
+                    setUploading(true);
+                    try {
+                        avatarUrl = await uploadProfilePhoto(avatarUri, uid);
+                    } finally {
+                        setUploading(false);
+                    }
+                }
+
+                await saveUserProfile(uid, {
+                    name: name.trim(),
+                    email: email.trim(),
+                    birthday: birthday.trim(),
+                    phone: phone.trim(),
+                    avatarUrl,
+                });
             } else {
                 await signInWithEmail(email, password);
             }
@@ -40,6 +84,10 @@ const AuthPresenter = observer(function AuthPresenter(props) {
 
     function userToggledModeACB() {
         setErrorMessage(null);
+        setName("");
+        setBirthday("");
+        setPhone("");
+        setAvatarUri(null);
         setIsRegisterMode(!isRegisterMode);
     }
 
@@ -48,9 +96,18 @@ const AuthPresenter = observer(function AuthPresenter(props) {
             isRegisterMode={isRegisterMode}
             email={email}
             password={password}
+            name={name}
+            birthday={birthday}
+            phone={phone}
+            avatarUri={avatarUri}
+            uploading={uploading}
             errorMessage={errorMessage}
             onEmailChange={setEmail}
             onPasswordChange={setPassword}
+            onNameChange={setName}
+            onBirthdayChange={setBirthday}
+            onPhoneChange={setPhone}
+            onChoosePhoto={userChosePhotoACB}
             onSubmit={userSubmittedFormACB}
             onToggleMode={userToggledModeACB}
         />

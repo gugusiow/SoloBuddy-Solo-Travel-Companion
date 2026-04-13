@@ -476,11 +476,15 @@ const styles = StyleSheet.create({
     overflow: "hidden",
   },
   sunCurveWrapper: {
-    height: 145,
-    justifyContent: "flex-end",
+    height: 150,
+    justifyContent: "center",
     alignItems: "center",
     position: "relative",
-    paddingBottom: 80,
+    marginBottom: 8,
+  },
+  sunSvg: {
+    width: "100%",
+    height: 140,
   },
   sunCurveGlow: {
     position: "absolute",

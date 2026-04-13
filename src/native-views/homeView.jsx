@@ -9,6 +9,7 @@ import {
   Modal,
   ActivityIndicator,
 } from "react-native";
+import Svg, { Defs, LinearGradient, Stop, Path, Circle } from "react-native-svg";
 import { AttractionCard } from "./attractionCard";
 import { AttractionsMap } from "./attractionsMap";
 import { AttractionDetailsModal } from "./attractionDetailsModal";
@@ -102,6 +103,64 @@ export function HomeView(props) {
   function closeWeatherModalACB() {
     setWeatherModalVisible(false);
   }
+
+  function parseTimeToMinutesACB(timeText) {
+    if (!timeText || typeof timeText !== "string") {
+      return null;
+    }
+
+    const match = timeText.trim().match(/^(\d{1,2}):(\d{2})\s*(AM|PM)?$/i);
+    if (!match) {
+      return null;
+    }
+
+    let hours = Number(match[1]);
+    const minutes = Number(match[2]);
+    const meridiem = match[3] ? match[3].toUpperCase() : null;
+
+    if (Number.isNaN(hours) || Number.isNaN(minutes) || minutes > 59) {
+      return null;
+    }
+
+    if (meridiem) {
+      if (hours < 1 || hours > 12) {
+        return null;
+      }
+
+      if (hours === 12) {
+        hours = 0;
+      }
+
+      if (meridiem === "PM") {
+        hours += 12;
+      }
+    }
+
+    if (hours > 23) {
+      return null;
+    }
+
+    return hours * 60 + minutes;
+  }
+
+  function getSunProgressACB() {
+    const sunrise = parseTimeToMinutesACB(weather?.sunrise);
+    const sunset = parseTimeToMinutesACB(weather?.sunset);
+
+    if (sunrise == null || sunset == null || sunset <= sunrise) {
+      return 0.5;
+    }
+
+    const now = new Date();
+    const currentMinutes = now.getHours() * 60 + now.getMinutes();
+    const progress = (currentMinutes - sunrise) / (sunset - sunrise);
+
+    return Math.max(0, Math.min(progress, 1));
+  }
+
+  const sunProgress = getSunProgressACB();
+  const sunX = 34 + sunProgress * 252;
+  const sunY = 114 - Math.sin(sunProgress * Math.PI) * 72;
 
 
   function getUvColorACB(uvIndex) {
@@ -510,9 +569,29 @@ export function HomeView(props) {
 
                   <View style={styles.sunCard}>
                     <View style={styles.sunCurveWrapper}>
-                      <View style={styles.sunCurveGlow} />
-                      <View style={styles.sunCurveArc} />
-                      <View style={styles.sunHorizon} />
+                      <Svg style={styles.sunSvg} viewBox="0 0 320 140" preserveAspectRatio="none">
+                        <Defs>
+                          <LinearGradient id="skyGradient" x1="0" y1="0" x2="0" y2="1">
+                            <Stop offset="0%" stopColor="#1d4ed8" stopOpacity="0.08" />
+                            <Stop offset="100%" stopColor="#f59e0b" stopOpacity="0.35" />
+                          </LinearGradient>
+                          <LinearGradient id="arcGradient" x1="0" y1="0" x2="1" y2="0">
+                            <Stop offset="0%" stopColor="#f97316" />
+                            <Stop offset="50%" stopColor="#facc15" />
+                            <Stop offset="100%" stopColor="#fb7185" />
+                          </LinearGradient>
+                          <LinearGradient id="sunGradient" x1="0" y1="0" x2="1" y2="1">
+                            <Stop offset="0%" stopColor="#fef08a" />
+                            <Stop offset="100%" stopColor="#f59e0b" />
+                          </LinearGradient>
+                        </Defs>
+
+                        <Path d="M 20 124 Q 160 10 300 124 L 300 124 L 20 124 Z" fill="url(#skyGradient)" />
+                        <Path d="M 20 124 Q 160 10 300 124" stroke="url(#arcGradient)" strokeWidth="7" fill="none" strokeLinecap="round" />
+                        <Path d="M 12 126 L 308 126" stroke="rgba(255,255,255,0.22)" strokeWidth="2" strokeLinecap="round" />
+                        <Circle cx={sunX} cy={sunY} r="13" fill="url(#sunGradient)" />
+                        <Circle cx={sunX} cy={sunY} r="20" fill="rgba(250, 204, 21, 0.24)" />
+                      </Svg>
                     </View>
 
                     <View style={styles.sunTimesRow}>

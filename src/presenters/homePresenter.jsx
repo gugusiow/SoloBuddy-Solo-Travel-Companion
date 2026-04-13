@@ -2,8 +2,6 @@ import { useEffect } from "react";
 import { observer } from "mobx-react-lite";
 import * as Location from "expo-location";
 import { HomeView } from "../native-views/homeView.jsx";
-import { reverseGeocodeACB } from "../services/googleMapsService.js";
-
 
 const HomePresenter = observer(function HomePresenter(props) {
   const model = props.model;
@@ -74,15 +72,17 @@ const HomePresenter = observer(function HomePresenter(props) {
     }
   }
 
+  // change to use expo library instead
   async function userWantsToRefreshNewsACB() {
     try {
       const location = model.currentLocation;
       if (!location) return;
-      const city = await reverseGeocodeACB(location.latitude, location.longitude);
+      const [place] = await Location.reverseGeocodeAsync({ latitude: location.latitude, longitude: location.longitude });
+      const city = [place?.city, place?.country].filter(Boolean).join(" ") || null;
       console.log("[news] city:", city);
       if (!city) return;
       // change here for different query.... but search results arent rlly good tbvh
-      model.fetchNews(`${city} AND (safety OR crime OR tourist)`);
+      model.fetchNews(`${city} AND (safety OR tourist attractions)`);
     } catch (error) {
       console.error("Failed to refresh news:", error);
     }

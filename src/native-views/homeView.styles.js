@@ -243,6 +243,9 @@ const styles = StyleSheet.create({
     paddingHorizontal: 14,
     paddingBottom: 28,
   },
+  weatherModalDay: {
+    backgroundColor: "#0ea5e9",
+  },
   weatherModalHeader: {
     flexDirection: "row",
     alignItems: "center",
@@ -369,9 +372,17 @@ const styles = StyleSheet.create({
     backgroundColor: "rgba(14,165,233,0.18)",
     borderColor: "rgba(14,165,233,0.25)",
   },
+  humidityMetricCardDay: {
+    backgroundColor: "#0ea5e9",
+    borderColor: "rgba(255,255,255,0.12)",
+  },
   windMetricCard: {
     backgroundColor: "rgba(148,163,184,0.18)",
     borderColor: "rgba(148,163,184,0.25)",
+  },
+  windMetricCardDay: {
+    backgroundColor: "#0ea5e9",
+    borderColor: "rgba(255,255,255,0.12)",
   },
   aqiMetricCard: {
     backgroundColor: "rgba(34,197,94,0.18)",

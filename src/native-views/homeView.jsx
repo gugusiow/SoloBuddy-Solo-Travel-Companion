@@ -433,7 +433,8 @@ export function HomeView(props) {
         <View style={styles.modalBackdrop}>
           <Pressable style={styles.modalOverlay} onPress={closeWeatherModalACB} />
 
-          <View style={styles.weatherModalSheet}>
+          {/* added some conditional styling so that the weather modal card changes bg color depending on the time of day */}
+          <View style={[styles.weatherModalSheet, weather?.isDaytime ? styles.weatherModalDay : null]}>
             <View style={styles.weatherModalHeader}>
               <View>
                 <Text style={styles.weatherModalTitle}>Weather details</Text>
@@ -522,8 +523,13 @@ export function HomeView(props) {
                         />
                       </View>
                     </View>
-
-                    <View style={[styles.weatherMetricCard, styles.humidityMetricCard]}>
+                    
+                    {/* conditional styling for the individual components */}
+                    <View style={[
+                      styles.weatherMetricCard,
+                      styles.humidityMetricCard,
+                      weather?.isDaytime ? styles.humidityMetricCardDay : null,
+                    ]}>
                       <Text style={styles.weatherMetricLabel}>Humidity</Text>
                       <Text style={styles.weatherMetricDescription}>
                         {weather?.humidity != null
@@ -546,7 +552,11 @@ export function HomeView(props) {
                       </View>
                     </View>
 
-                    <View style={[styles.weatherMetricCard, styles.windMetricCard]}>
+                    <View style={[
+                      styles.weatherMetricCard,
+                      styles.windMetricCard,
+                      weather?.isDaytime ? styles.windMetricCardDay : null,
+                    ]}>
                       <Text style={styles.weatherMetricLabel}>Wind</Text>
                       <Text style={styles.weatherMetricDescription}>
                         {weather?.windSpeed ? "Current wind speed" : "Unavailable"}

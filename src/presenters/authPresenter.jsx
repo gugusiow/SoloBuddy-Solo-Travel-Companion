@@ -25,7 +25,16 @@ const AuthPresenter = observer(function AuthPresenter(props) {
             }
             // onauthstatechanged in _layout.jsx handles updating model.currentUser
         } catch (error) {
-            setErrorMessage(error.message);
+            const code = error.code ?? "";
+            if (code === "auth/invalid-credential" || code === "auth/wrong-password" || code === "auth/user-not-found" || code === "auth/invalid-email") {
+                setErrorMessage("Invalid email or password.");
+            } else if (code === "auth/email-already-in-use") {
+                setErrorMessage("An account with this email already exists.");
+            } else if (code === "auth/weak-password") {
+                setErrorMessage("Password must be at least 6 characters.");
+            } else {
+                setErrorMessage("Something went wrong. Please try again.");
+            }
         }
     }
 

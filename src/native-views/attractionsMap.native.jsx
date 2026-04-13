@@ -10,7 +10,7 @@ const DEFAULT_REGION = {
   longitudeDelta: 0.12,
 };
 
-export function AttractionsMap({ attractions }) {
+export function AttractionsMap({ attractions, onSelectAttraction }) {
   const mapRef = useRef(null);
   const [userLocation, setUserLocation] = useState(null);
   const [permissionDenied, setPermissionDenied] = useState(false);
@@ -137,6 +137,9 @@ export function AttractionsMap({ attractions }) {
               }}
               title={attraction.name}
               description={attraction.description || attraction.address || ""}
+              onPress={function onMarkerPressACB() {
+                onSelectAttraction?.(attraction);
+              }}
             />
           );
         })}

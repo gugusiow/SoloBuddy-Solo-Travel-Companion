@@ -138,8 +138,17 @@ const HomePresenter = observer(function HomePresenter(props) {
   }
 
   function userWantsToSelectAttractionACB(attraction) {
-    model.setCurrentAttraction?.(attraction);
     console.log("Selected attraction:", attraction?.name);
+    model.setCurrentAttraction(attraction);
+  }
+
+  function userWantsToSeeMoreAttractionACB(attraction) {
+    model.setCurrentAttraction(attraction);
+    model.fetchPlaceDetails(attraction.id);
+  }
+
+  function userWantsToCloseAttractionDetailsACB() {
+    model.clearPlaceDetails();
   }
 
   useEffect(function loadInitialDataACB() {
@@ -160,6 +169,11 @@ const HomePresenter = observer(function HomePresenter(props) {
     !model.weatherDetailsPromiseState.data &&
     !model.weatherDetailsPromiseState.error;
 
+  const placeDetailsLoading =
+    !!model.placeDetailsPromiseState.promise &&
+    !model.placeDetailsPromiseState.data &&
+    !model.placeDetailsPromiseState.error;
+
   return (
     <HomeView
       attractions={model.attractionsPromiseState.data || []}
@@ -177,6 +191,10 @@ const HomePresenter = observer(function HomePresenter(props) {
       onRefreshSafetyAlerts={userWantsToRefreshSafetyAlertsACB}
       onRefreshNews={userWantsToRefreshNewsACB}
       onSelectAttraction={userWantsToSelectAttractionACB}
+      onSeeMoreAttraction={userWantsToSeeMoreAttractionACB}
+      placeDetails={model.placeDetailsPromiseState.data}
+      placeDetailsLoading={placeDetailsLoading}
+      onCloseAttractionDetails={userWantsToCloseAttractionDetailsACB}
     />
   );
 });

@@ -11,6 +11,7 @@ import {
 } from "react-native";
 import { AttractionCard } from "./attractionCard";
 import { AttractionsMap } from "./attractionsMap";
+import { AttractionDetailsModal } from "./attractionDetailsModal";
 
 import styles from "./homeView.styles.js";
 
@@ -21,6 +22,7 @@ export function HomeView(props) {
   const [listWidth, setListWidth] = useState(Dimensions.get("window").width);
   const [visibleAlerts, setVisibleAlerts] = useState([]);
   const [weatherModalVisible, setWeatherModalVisible] = useState(false);
+  const [attractionModalVisible, setAttractionModalVisible] = useState(false);
 
   const baseAttractions = props.attractions || [];
   const newsItems = props.touristNews || [];
@@ -83,7 +85,13 @@ export function HomeView(props) {
   }
 
   function userWantsToSeeMoreACB(attraction) {
-    props.onSelectAttraction?.(attraction);
+    props.onSeeMoreAttraction?.(attraction);
+    setAttractionModalVisible(true);
+  }
+
+  function closeAttractionModalACB() {
+    setAttractionModalVisible(false);
+    props.onCloseAttractionDetails?.();
   }
 
   function openWeatherModalACB() {
@@ -548,6 +556,14 @@ export function HomeView(props) {
           </View>
         </View>
       </Modal>
+
+      <AttractionDetailsModal
+        visible={attractionModalVisible}
+        onClose={closeAttractionModalACB}
+        attraction={props.currentAttraction}
+        placeDetails={props.placeDetails}
+        loading={props.placeDetailsLoading}
+      />
     </View>
   );
 }

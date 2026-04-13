@@ -11,6 +11,34 @@ async function fetchPhotoUrlACB(photoName) {
   return data.photoUri ?? null;
 }
 
+export async function fetchPlaceDetailsACB(placeId) {
+  const response = await fetch(
+    `https://places.googleapis.com/v1/places/${placeId}`,
+    {
+      headers: {
+        "X-Goog-Api-Key": GOOGLE_API_KEY,
+        "X-Goog-FieldMask": [
+          "editorialSummary",
+          "formattedAddress",
+          "nationalPhoneNumber",
+          "websiteUri",
+          "googleMapsUri",
+          "rating",
+          "userRatingCount",
+          "currentOpeningHours",
+          "regularOpeningHours",
+        ].join(","),
+      },
+    }
+  );
+
+  if (!response.ok) {
+    throw new Error("Failed to fetch place details");
+  }
+
+  return response.json();
+}
+
 function normalizePlaceACB(place, imageUrl) {
   return {
     id: place.id,

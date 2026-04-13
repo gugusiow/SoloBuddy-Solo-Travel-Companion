@@ -1,7 +1,8 @@
-import { makeAutoObservable } from "mobx";
+import { makeAutoObservable, configure } from "mobx";
+configure({ enforceActions: "never" });
 import { resolvePromise } from "./resolvePromise.js";
 import { fetchWeatherBannerACB, fetchWeatherDetailsACB, buildWeatherAlertsACB } from "./services/weatherService.js";
-import { fetchAttractionsACB } from "./services/placesService.js";
+import { fetchAttractionsACB, fetchPlaceDetailsACB } from "./services/placesService.js";
 
 class AppModel {
   // keep this static data for now
@@ -17,6 +18,10 @@ class AppModel {
   weatherBannerPromiseState = {};
   weatherDetailsPromiseState = {};
   attractionsPromiseState = {};
+  placeDetailsPromiseState = {};
+
+  // currently selected attraction
+  currentAttraction = null;
 
   // weather alerts derived from weather data
   weatherAlerts = [];
@@ -59,6 +64,20 @@ class AppModel {
   // --- attractions ---
   fetchAttractions(lat, lng) {
     resolvePromise(fetchAttractionsACB(lat, lng), this.attractionsPromiseState);
+  }
+
+  setCurrentAttraction(attraction) {
+    this.currentAttraction = attraction;
+  }
+
+  fetchPlaceDetails(placeId) {
+    resolvePromise(fetchPlaceDetailsACB(placeId), this.placeDetailsPromiseState);
+  }
+
+  clearPlaceDetails() {
+    this.placeDetailsPromiseState.promise = null;
+    this.placeDetailsPromiseState.data = null;
+    this.placeDetailsPromiseState.error = null;
   }
 
   // setter

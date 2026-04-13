@@ -1,4 +1,7 @@
 import { makeAutoObservable } from "mobx";
+import { resolvePromise } from "./resolvePromise.js";
+import { fetchWeatherBannerACB, fetchWeatherDetailsACB, buildWeatherAlertsACB } from "./services/weatherService.js";
+import { enrichAttractionsWithCoordinates } from "./services/googleMapsService.js";
 
 class AppModel {
   // keep this static data for now
@@ -10,9 +13,13 @@ class AppModel {
     { id: 5, name: "Basílica de la Sagrada Família", location: "Barcelona, Spain", safetyRating: 4.0, latitude: 41.4036, longitude: 2.1744 },
   ];
 
-  // try to set up weather alert system
+  // promise states for async data
+  weatherBannerPromiseState = {};
+  weatherDetailsPromiseState = {};
+  attractionsPromiseState = {};
+
+  // weather alerts derived from weather data
   weatherAlerts = [];
-  loadingStatus = false;
 
   // news and safety data? 
   touristNews = [];
@@ -25,22 +32,36 @@ class AppModel {
   // user's current device location { latitude, longitude } or null
   currentLocation = null;
 
-  // current weather in user's area
-  currentWeather = null;
-  setCurrentWeather(weather) {
-    this.currentWeather = weather;
-  }
-
-  // loading state for the weather banner
-  weatherLoading = false;
-  setWeatherLoading(status) {
-    this.weatherLoading = status;
-  }
+  // loading state
+  loadingStatus = false;
 
   constructor() {
     makeAutoObservable(this, {}, { autoBind: true });
   }
 
+  // --- weather ---
+  fetchWeatherBanner(lat, lng) {
+    resolvePromise(fetchWeatherBannerACB(lat, lng), this.weatherBannerPromiseState);
+  }
+
+  fetchWeatherDetails(lat, lng) {
+    resolvePromise(fetchWeatherDetailsACB(lat, lng), this.weatherDetailsPromiseState);
+  }
+
+  updateWeatherAlerts() {
+    const weather = this.weatherDetailsPromiseState.data || this.weatherBannerPromiseState.data;
+    const alerts = buildWeatherAlertsACB(weather);
+    this.weatherAlerts = alerts.length > 0
+      ? alerts
+      : [{ event: "No major local incidents reported", description: "No robbery, accident, earthquake, or severe weather alert is currently flagged for your area." }];
+  }
+
+  // --- attractions ---
+  fetchAttractions(baseAttractions) {
+    resolvePromise(enrichAttractionsWithCoordinates(baseAttractions), this.attractionsPromiseState);
+  }
+
+  // setter
   setLoading(status) {
     this.loadingStatus = status;
   }

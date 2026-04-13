@@ -1,13 +1,7 @@
-import React, { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { observer } from "mobx-react-lite";
 import * as Location from "expo-location";
 import { HomeView } from "../native-views/homeView.jsx";
-import { enrichAttractionsWithCoordinates } from "../services/googleMapsService.js";
-import {
-  fetchWeatherBannerACB,
-  buildWeatherAlertsACB,
-  fetchWeatherDetailsACB, 
-} from "../services/weatherService.js";
 
 const mockAttractions = [
   {
@@ -45,8 +39,6 @@ const mockAttractions = [
 const HomePresenter = observer(function HomePresenter(props) {
   const model = props.model;
 
-  const [weatherDetailsLoading, setWeatherDetailsLoading] = useState(false);
-
   async function getUserLocationACB() {
     if (
       model.currentLocation?.latitude != null &&
@@ -76,40 +68,18 @@ const HomePresenter = observer(function HomePresenter(props) {
 
   async function userWantsToRefreshWeatherACB() {
     const location = await getUserLocationACB();
-
-    const weather = await fetchWeatherBannerACB(
-      location.latitude,
-      location.longitude
-    );
-
-    model.setCurrentWeather?.(weather);
+    model.fetchWeatherBanner(location.latitude, location.longitude);
   }
 
   async function userWantsToRefreshSafetyAlertsACB() {
     model.setLoading?.(true);
-
     try {
-      if (!model.currentWeather) {
+      if (!model.weatherBannerPromiseState.data) {
         await userWantsToRefreshWeatherACB();
       }
-
-      const weatherAlerts = buildWeatherAlertsACB(model.currentWeather);
-
-      const fallbackSafetyAlerts =
-        weatherAlerts.length > 0
-          ? weatherAlerts
-          : [
-              {
-                event: "No major local incidents reported",
-                description:
-                  "No robbery, accident, earthquake, or severe weather alert is currently flagged for your area.",
-              },
-            ];
-
-      model.setWeatherAlerts?.(fallbackSafetyAlerts);
+      model.updateWeatherAlerts();
     } catch (error) {
       console.error("Failed to refresh safety alerts:", error);
-
       model.setWeatherAlerts?.([
         {
           event: "Safety alerts unavailable",
@@ -125,24 +95,11 @@ const HomePresenter = observer(function HomePresenter(props) {
   }
 
   async function userWantsToOpenWeatherDetailsACB() {
-    setWeatherDetailsLoading(true);
-
     try {
       const location = await getUserLocationACB();
-
-      const detailedWeather = await fetchWeatherDetailsACB(
-        location.latitude,
-        location.longitude
-      );
-
-      model.setCurrentWeather?.({
-        ...model.currentWeather,
-        ...detailedWeather,
-      });
+      model.fetchWeatherDetails(location.latitude, location.longitude);
     } catch (error) {
       console.error("Failed to load weather details:", error);
-    } finally {
-      setWeatherDetailsLoading(false);
     }
   }
 
@@ -177,7 +134,6 @@ const HomePresenter = observer(function HomePresenter(props) {
           publishedAt: "Updated 45m ago",
         },
       ];
-
       model.setTouristNews?.(mockTouristNews);
     } catch (error) {
       console.error("Failed to refresh tourist news:", error);
@@ -187,28 +143,15 @@ const HomePresenter = observer(function HomePresenter(props) {
 
   async function loadHomeScreenDataACB() {
     model.setLoading?.(true);
-
     try {
       await userWantsToRefreshWeatherACB();
-
-      const baseAttractions =
-        model.attractions && model.attractions.length > 0
-          ? model.attractions
-          : mockAttractions;
-
-      const enrichedAttractions = await enrichAttractionsWithCoordinates(
-        baseAttractions
-      );
-
-      model.setAttractions?.(enrichedAttractions);
+      model.fetchAttractions(mockAttractions);
 
       if (!model.weatherAlerts || model.weatherAlerts.length === 0) {
-        const startupAlerts = buildWeatherAlertsACB(model.currentWeather);
-        model.setWeatherAlerts?.(startupAlerts);
+        model.updateWeatherAlerts();
       }
     } catch (error) {
       console.error("Failed to load home screen data:", error);
-
       model.setWeatherAlerts?.([
         {
           event: "Weather unavailable",
@@ -241,11 +184,16 @@ const HomePresenter = observer(function HomePresenter(props) {
     [model.currentUser]
   );
 
+  const weatherDetailsLoading =
+    !!model.weatherDetailsPromiseState.promise &&
+    !model.weatherDetailsPromiseState.data &&
+    !model.weatherDetailsPromiseState.error;
+
   return (
     <HomeView
-      attractions={model.attractions || []}
+      attractions={model.attractionsPromiseState.data || []}
       currentAttraction={model.currentAttraction}
-      currentWeather={model.currentWeather}
+      currentWeather={model.weatherBannerPromiseState.data || model.weatherDetailsPromiseState.data}
       weatherAlerts={model.weatherAlerts || []}
       weatherDetailsLoading={weatherDetailsLoading}
       onOpenWeatherDetails={userWantsToOpenWeatherDetailsACB}

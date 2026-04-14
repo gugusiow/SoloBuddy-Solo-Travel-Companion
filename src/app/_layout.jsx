@@ -34,7 +34,7 @@ export default observer(function RootLayout() {
                 options={{
                     title: "Explore",
                     tabBarLabel: "Explore",
-                    headerTitle: `Hey ${currentUserName}, let's explore!`,
+                    headerTitle: model.currentCity ? `Hey ${currentUserName}, let's explore ${model.currentCity}!` : `Hey ${currentUserName}, let's explore!`,
                     tabBarIcon: function renderExploreTabIconACB() {
                         return <Text>🗺️</Text>;
                     },

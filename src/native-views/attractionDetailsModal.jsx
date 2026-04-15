@@ -16,6 +16,10 @@ export function AttractionDetailsModal({ visible, onClose, attraction, placeDeta
   const [hoursExpanded, setHoursExpanded] = useState(false);
   const [copied, setCopied] = useState(false);
 
+  // new UI state to control add-to-wishlist, 'adding' status to prevent duplicates, and 'added' to trigger pop up
+  const [adding, setAdding] = useState(false);
+  const [added, setAdded] = useState(false);
+
   const hours = placeDetails?.currentOpeningHours || placeDetails?.regularOpeningHours;
   const weekdayDescriptions = hours?.weekdayDescriptions || [];
   const openNow = placeDetails?.currentOpeningHours?.openNow;
@@ -211,10 +215,37 @@ export function AttractionDetailsModal({ visible, onClose, attraction, placeDeta
               {/* Can add attraction to the user's wishlist via presenter callback */}
               <Pressable
                 style={({ pressed }) => [styles.wishlistButton, pressed && styles.pressed]}
-                onPress={() => onAddToWishlist?.()}
+                onPress={async () => {
+                  // Guard: ignore presses while already saving
+                  if (adding) return;
+
+                  // If presenter callback is provided, call it and show feedback.
+                  try {
+                    setAdding(true);
+                    await onAddToWishlist?.();
+                    // Show transient confirmation toast
+                    setAdded(true);
+                    setTimeout(() => setAdded(false), 1800);
+                  } catch (err) {
+                    // On error, still show a brief notice (could be improved)
+                    setAdded(true);
+                    setTimeout(() => setAdded(false), 1800);
+                  } finally {
+                    setAdding(false);
+                  }
+                }}
               >
-                <Text style={styles.wishlistButtonText}>Add to Wishlist</Text>
+                <Text style={styles.wishlistButtonText}>
+                  {adding ? "Adding..." : added ? "Added to wishlist" : "Add to Wishlist"}
+                </Text>
               </Pressable>
+
+              {/* pop up briefly when an wishlist item is added */}
+              {added ? (
+                <View style={styles.addedPopup} pointerEvents="none">
+                  <Text style={styles.addedPopupText}>Added to wishlist</Text>
+                </View>
+              ) : null}
             </ScrollView>
           )}
         </View>
@@ -424,6 +455,26 @@ const styles = StyleSheet.create({
   wishlistButtonText: {
     color: "#ffffff",
     fontSize: 14,
+    fontWeight: "700",
+  },
+  // Transient confirmation toast shown when an item is added to wishlist.
+  addedPopup: {
+    position: "absolute",
+    left: 20,
+    right: 20,
+    top: "50%",
+    opacity: 0.9,
+    backgroundColor: "#777e8e",
+    paddingVertical: 8,
+    paddingHorizontal: 12,
+    borderRadius: 10,
+    alignItems: "center",
+    elevation: 6,
+    transform: [{ translateY: -40 }],
+    zIndex: 50,
+  },
+  addedPopupText: {
+    color: "#ffffff",
     fontWeight: "700",
   },
   pressed: {

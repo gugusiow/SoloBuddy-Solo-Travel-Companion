@@ -12,7 +12,7 @@ function getTodayHoursACB(weekdayDescriptions) {
 }
 
 // can include photos next time but then i scarewd API usage high
-export function AttractionDetailsModal({ visible, onClose, attraction, placeDetails, loading }) {
+export function AttractionDetailsModal({ visible, onClose, attraction, placeDetails, loading, onAddToWishlist }) {
   const [hoursExpanded, setHoursExpanded] = useState(false);
   const [copied, setCopied] = useState(false);
 
@@ -207,6 +207,14 @@ export function AttractionDetailsModal({ visible, onClose, attraction, placeDeta
                   <Text style={styles.mapsButtonText}>Open in Google Maps</Text>
                 </Pressable>
               ) : null}
+
+              {/* Can add attraction to the user's wishlist via presenter callback */}
+              <Pressable
+                style={({ pressed }) => [styles.wishlistButton, pressed && styles.pressed]}
+                onPress={() => onAddToWishlist?.()}
+              >
+                <Text style={styles.wishlistButtonText}>Add to Wishlist</Text>
+              </Pressable>
             </ScrollView>
           )}
         </View>
@@ -404,6 +412,18 @@ const styles = StyleSheet.create({
   mapsButtonText: {
     color: "#ffffff",
     fontSize: 15,
+    fontWeight: "700",
+  },
+  wishlistButton: {
+    backgroundColor: "#111827",
+    borderRadius: 12,
+    alignItems: "center",
+    justifyContent: "center",
+    paddingVertical: 12,
+  },
+  wishlistButtonText: {
+    color: "#ffffff",
+    fontSize: 14,
     fontWeight: "700",
   },
   pressed: {

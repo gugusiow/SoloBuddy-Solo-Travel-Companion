@@ -671,6 +671,7 @@ export function HomeView(props) {
         attraction={props.currentAttraction}
         placeDetails={props.placeDetails}
         loading={props.placeDetailsLoading}
+        onAddToWishlist={props.onAddToWishlist}
       />
     </View>
   );

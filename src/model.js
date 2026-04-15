@@ -26,6 +26,9 @@ class AppModel {
   profile = null;
   ready = false;
 
+  // attraction wishlist
+  wishlist = [];
+
   // user's current device location { latitude, longitude } or null
   currentLocation = null;
 
@@ -109,6 +112,11 @@ class AppModel {
 
   setCurrentLocation(location) {
     this.currentLocation = location;
+  }
+
+  // set wishlist to replace current items
+  setWishlist(items) {
+    this.wishlist = Array.isArray(items) ? items : [];
   }
 }
 

@@ -2,6 +2,7 @@ import { useEffect } from "react";
 import { observer } from "mobx-react-lite";
 import * as Location from "expo-location";
 import { HomeView } from "../native-views/homeView.jsx";
+import { setWishlistItem } from "../firebaseModel.js";
 
 const HomePresenter = observer(function HomePresenter(props) {
   const model = props.model;
@@ -128,6 +129,26 @@ const HomePresenter = observer(function HomePresenter(props) {
     model.clearPlaceDetails();
   }
 
+  // save attraction into the user's wishlist
+  async function userWantsToAddToWishlistACB() {
+    // check to make sure it's the actual user
+    if (!model.currentUser || !model.currentAttraction?.id) {
+      return;
+    }
+    const attraction = model.currentAttraction;
+    // set the fields of the wishlist cards 
+    await setWishlistItem(model.currentUser.uid, {
+      id: attraction.id,
+      name: attraction.name || "Untitled",
+      location: attraction.location || "",
+      imageUrl: attraction.imageUrl || "",
+      description: attraction.shortDescription || "",
+      userRating: attraction.userRating ?? null,
+      lat: attraction.lat ?? null,
+      lng: attraction.lng ?? null,
+    });
+  }
+
   useEffect(function loadInitialDataACB() {
     loadHomeScreenDataACB();
   }, []);
@@ -172,6 +193,7 @@ const HomePresenter = observer(function HomePresenter(props) {
       placeDetails={model.placeDetailsPromiseState.data}
       placeDetailsLoading={placeDetailsLoading}
       onCloseAttractionDetails={userWantsToCloseAttractionDetailsACB}
+      onAddToWishlist={userWantsToAddToWishlistACB}
     />
   );
 });

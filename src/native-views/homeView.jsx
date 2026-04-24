@@ -8,6 +8,7 @@ import {
   ScrollView,
   Modal,
   ActivityIndicator,
+  TextInput,
 } from "react-native";
 import { openURL } from "expo-linking";
 import Svg, { Defs, LinearGradient, Stop, Path, Circle } from "react-native-svg";
@@ -26,6 +27,7 @@ export function HomeView(props) {
   const [weatherModalVisible, setWeatherModalVisible] = useState(false);
   const [attractionModalVisible, setAttractionModalVisible] = useState(false);
   const [visibleNewsCount, setVisibleNewsCount] = useState(4);
+  const [mapQuery, setMapQuery] = useState("");
 
   const baseAttractions = props.attractions || [];
   const newsItems = props.touristNews || [];
@@ -298,6 +300,15 @@ export function HomeView(props) {
     return `${item.id ?? "item"}-${index}`;
   }
 
+  function handleMapSearchSubmitACB() {
+    if (mapQuery.trim()) props.onSearchPlaces?.(mapQuery);
+  }
+
+  function handleMapClearACB() {
+    setMapQuery("");
+    props.onClearSearch?.();
+  }
+
   return (
     <View style={{ flex: 1 }}>
       <ScrollView
@@ -344,12 +355,38 @@ export function HomeView(props) {
           </Pressable>
         ) : null}
 
-        <View style={styles.mapSection}>
-          <AttractionsMap
-            attractions={baseAttractions}
-            currentAttraction={props.currentAttraction}
-            onSelectAttraction={props.onSelectAttraction}
-          />
+        <View style={styles.mapContainer}>
+          <View style={styles.mapSearchBar}>
+            <TextInput
+              style={styles.mapSearchInput}
+              placeholder="Search places..."
+              placeholderTextColor="#9ca3af"
+              value={mapQuery}
+              onChangeText={setMapQuery}
+              onSubmitEditing={handleMapSearchSubmitACB}
+              returnKeyType="search"
+            />
+            {props.mapSearchLoading ? (
+              <ActivityIndicator size="small" color="#111827" style={styles.mapSearchIcon} />
+            ) : mapQuery.length > 0 ? (
+              <Pressable onPress={handleMapClearACB} style={styles.mapSearchIcon}>
+                <Text style={styles.mapSearchClearText}>✕</Text>
+              </Pressable>
+            ) : (
+              <Pressable onPress={handleMapSearchSubmitACB} style={styles.mapSearchIcon}>
+                <Text style={styles.mapSearchIconText}>🔍</Text>
+              </Pressable>
+            )}
+          </View>
+
+          <View style={styles.mapSection}>
+            <AttractionsMap
+              attractions={baseAttractions}
+              currentAttraction={props.currentAttraction}
+              onSelectAttraction={userWantsToSeeMoreACB}
+              searchResults={props.mapSearchResults || []}
+            />
+          </View>
         </View>
 
         {props.loadingStatus ? (

@@ -32,6 +32,10 @@ class AppModel {
   // community posts feed
   communityPosts = [];
 
+  // map text-search results
+  mapSearchResults = [];
+  mapSearchLoading = false;
+
   // user's current device location { latitude, longitude } or null
   currentLocation = null;
 
@@ -124,6 +128,18 @@ class AppModel {
 
   setCommunityPosts(posts) {
     this.communityPosts = Array.isArray(posts) ? posts : [];
+  }
+
+  setMapSearchResults(results) {
+    this.mapSearchResults = Array.isArray(results) ? results : [];
+  }
+
+  setMapSearchLoading(status) {
+    this.mapSearchLoading = status;
+  }
+
+  clearMapSearchResults() {
+    this.mapSearchResults = [];
   }
 }
 

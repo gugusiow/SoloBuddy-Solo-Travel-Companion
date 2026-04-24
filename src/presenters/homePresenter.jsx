@@ -3,6 +3,7 @@ import { observer } from "mobx-react-lite";
 import * as Location from "expo-location";
 import { HomeView } from "../native-views/homeView.jsx";
 import { setWishlistItem } from "../firebaseModel.js";
+import { searchPlacesByTextACB } from "../services/placesService.js";
 
 const HomePresenter = observer(function HomePresenter(props) {
   const model = props.model;
@@ -129,6 +130,32 @@ const HomePresenter = observer(function HomePresenter(props) {
     model.clearPlaceDetails();
   }
 
+  async function userWantsToSearchPlacesACB(query) {
+    if (!query?.trim()) {
+      model.clearMapSearchResults();
+      return;
+    }
+    model.setMapSearchLoading(true);
+    try {
+      const location = model.currentLocation;
+      const results = await searchPlacesByTextACB(
+        query.trim(),
+        location?.latitude ?? null,
+        location?.longitude ?? null
+      );
+      model.setMapSearchResults(results);
+    } catch (error) {
+      console.error("Place search failed:", error);
+      model.setMapSearchResults([]);
+    } finally {
+      model.setMapSearchLoading(false);
+    }
+  }
+
+  function userWantsToClearSearchACB() {
+    model.clearMapSearchResults();
+  }
+
   // save attraction into the user's wishlist
   async function userWantsToAddToWishlistACB() {
     // check to make sure it's the actual user
@@ -194,6 +221,10 @@ const HomePresenter = observer(function HomePresenter(props) {
       placeDetailsLoading={placeDetailsLoading}
       onCloseAttractionDetails={userWantsToCloseAttractionDetailsACB}
       onAddToWishlist={userWantsToAddToWishlistACB}
+      mapSearchResults={model.mapSearchResults}
+      mapSearchLoading={model.mapSearchLoading}
+      onSearchPlaces={userWantsToSearchPlacesACB}
+      onClearSearch={userWantsToClearSearchACB}
     />
   );
 });

@@ -1,5 +1,10 @@
 import React, { useEffect, useMemo, useRef, useState } from "react";
-import { StyleSheet, Text, View, ActivityIndicator } from "react-native";
+import {
+  StyleSheet,
+  Text,
+  View,
+  ActivityIndicator,
+} from "react-native";
 import MapView, { Marker } from "react-native-maps";
 import * as Location from "expo-location";
 
@@ -10,7 +15,11 @@ const DEFAULT_REGION = {
   longitudeDelta: 0.12,
 };
 
-export function AttractionsMap({ attractions, onSelectAttraction }) {
+export function AttractionsMap({
+  attractions,
+  onSelectAttraction,
+  searchResults,
+}) {
   const mapRef = useRef(null);
   const [userLocation, setUserLocation] = useState(null);
   const [permissionDenied, setPermissionDenied] = useState(false);
@@ -24,6 +33,12 @@ export function AttractionsMap({ attractions, onSelectAttraction }) {
       );
     });
   }, [attractions]);
+
+  const mappableSearchResults = useMemo(function computeMappableSearchACB() {
+    return (searchResults || []).filter(
+      (r) => Number.isFinite(r.latitude) && Number.isFinite(r.longitude)
+    );
+  }, [searchResults]);
 
   const fallbackRegion = useMemo(function computeFallbackRegionACB() {
     if (!mappableAttractions.length) {
@@ -46,6 +61,41 @@ export function AttractionsMap({ attractions, onSelectAttraction }) {
     };
   }, [mappableAttractions]);
 
+  // when search results arrive, animate the map to fit them all
+  useEffect(function animateToSearchResultsACB() {
+    if (!mappableSearchResults.length || !mapRef.current) return;
+
+    if (mappableSearchResults.length === 1) {
+      mapRef.current.animateToRegion(
+        {
+          latitude: mappableSearchResults[0].latitude,
+          longitude: mappableSearchResults[0].longitude,
+          latitudeDelta: 0.04,
+          longitudeDelta: 0.04,
+        },
+        600
+      );
+      return;
+    }
+
+    const lats = mappableSearchResults.map((r) => r.latitude);
+    const lngs = mappableSearchResults.map((r) => r.longitude);
+    const minLat = Math.min(...lats);
+    const maxLat = Math.max(...lats);
+    const minLng = Math.min(...lngs);
+    const maxLng = Math.max(...lngs);
+
+    mapRef.current.animateToRegion(
+      {
+        latitude: (minLat + maxLat) / 2,
+        longitude: (minLng + maxLng) / 2,
+        latitudeDelta: Math.max((maxLat - minLat) * 1.6, 0.05),
+        longitudeDelta: Math.max((maxLng - minLng) * 1.6, 0.05),
+      },
+      600
+    );
+  }, [mappableSearchResults]);
+
   useEffect(() => {
     let isMounted = true;
 
@@ -53,21 +103,15 @@ export function AttractionsMap({ attractions, onSelectAttraction }) {
       try {
         setIsLoadingLocation(true);
 
-        const { status } =
-          await Location.requestForegroundPermissionsAsync();
+        const { status } = await Location.requestForegroundPermissionsAsync();
 
         if (status !== "granted") {
-          if (isMounted) {
-            setPermissionDenied(true);
-          }
+          if (isMounted) setPermissionDenied(true);
           return;
         }
 
         const position = await Location.getLastKnownPositionAsync();
-
-        if (!isMounted) {
-          return;
-        }
+        if (!isMounted) return;
 
         const coords = {
           latitude: position.coords.latitude,
@@ -78,39 +122,27 @@ export function AttractionsMap({ attractions, onSelectAttraction }) {
 
         requestAnimationFrame(() => {
           mapRef.current?.animateToRegion(
-            {
-              ...coords,
-              latitudeDelta: 0.02,
-              longitudeDelta: 0.02,
-            },
+            { ...coords, latitudeDelta: 0.02, longitudeDelta: 0.02 },
             800
           );
         });
       } catch (_error) {
       } finally {
-        if (isMounted) {
-          setIsLoadingLocation(false);
-        }
+        if (isMounted) setIsLoadingLocation(false);
       }
     }
 
     loadUserLocationACB();
-
-    return function cleanupACB() {
-      isMounted = false;
-    };
+    return () => { isMounted = false; };
   }, []);
 
   const initialRegion = userLocation
-    ? {
-        ...userLocation,
-        latitudeDelta: 0.02,
-        longitudeDelta: 0.02,
-      }
+    ? { ...userLocation, latitudeDelta: 0.02, longitudeDelta: 0.02 }
     : fallbackRegion;
 
   return (
     <View style={styles.container}>
+
       <MapView
         ref={mapRef}
         style={styles.map}
@@ -127,18 +159,30 @@ export function AttractionsMap({ attractions, onSelectAttraction }) {
           />
         ) : null}
 
-        {mappableAttractions.map(function renderMarkerACB(attraction) {
+        {mappableAttractions.map(function renderAttractionMarkerACB(attraction) {
           return (
             <Marker
-              key={String(attraction.id ?? attraction.name)}
-              coordinate={{
-                latitude: attraction.latitude,
-                longitude: attraction.longitude,
-              }}
+              key={`attraction-${String(attraction.id ?? attraction.name)}`}
+              coordinate={{ latitude: attraction.latitude, longitude: attraction.longitude }}
               title={attraction.name}
-              description={attraction.description || attraction.address || ""}
+              description={attraction.location || ""}
               onPress={function onMarkerPressACB() {
                 onSelectAttraction?.(attraction);
+              }}
+            />
+          );
+        })}
+
+        {mappableSearchResults.map(function renderSearchMarkerACB(result) {
+          return (
+            <Marker
+              key={`search-${String(result.id ?? result.name)}`}
+              coordinate={{ latitude: result.latitude, longitude: result.longitude }}
+              title={result.name}
+              description={result.location || ""}
+              pinColor="#0ea5e9"
+              onPress={function onSearchMarkerPressACB() {
+                onSelectAttraction?.(result);
               }}
             />
           );
@@ -160,6 +204,14 @@ export function AttractionsMap({ attractions, onSelectAttraction }) {
           </Text>
         </View>
       ) : null}
+
+      {mappableSearchResults.length > 0 && (
+        <View style={styles.resultsBadge}>
+          <Text style={styles.resultsBadgeText}>
+            {mappableSearchResults.length} result{mappableSearchResults.length !== 1 ? "s" : ""}
+          </Text>
+        </View>
+      )}
     </View>
   );
 }
@@ -174,7 +226,7 @@ const styles = StyleSheet.create({
   },
   overlay: {
     position: "absolute",
-    top: 12,
+    top: 64,
     alignSelf: "center",
     backgroundColor: "rgba(255,255,255,0.92)",
     paddingHorizontal: 12,
@@ -204,5 +256,18 @@ const styles = StyleSheet.create({
     fontSize: 13,
     textAlign: "center",
   },
+  resultsBadge: {
+    position: "absolute",
+    bottom: 12,
+    alignSelf: "center",
+    backgroundColor: "#0ea5e9",
+    paddingHorizontal: 14,
+    paddingVertical: 6,
+    borderRadius: 999,
+  },
+  resultsBadgeText: {
+    color: "#ffffff",
+    fontSize: 13,
+    fontWeight: "700",
+  },
 });
-

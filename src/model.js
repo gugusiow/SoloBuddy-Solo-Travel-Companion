@@ -29,6 +29,9 @@ class AppModel {
   // attraction wishlist
   wishlist = [];
 
+  // community posts feed
+  communityPosts = [];
+
   // user's current device location { latitude, longitude } or null
   currentLocation = null;
 
@@ -117,6 +120,10 @@ class AppModel {
   // set wishlist to replace current items
   setWishlist(items) {
     this.wishlist = Array.isArray(items) ? items : [];
+  }
+
+  setCommunityPosts(posts) {
+    this.communityPosts = Array.isArray(posts) ? posts : [];
   }
 }
 

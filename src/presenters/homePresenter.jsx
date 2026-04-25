@@ -35,84 +35,12 @@ const HomePresenter = observer(function HomePresenter(props) {
     return nextLocation;
   }
 
-  async function userWantsToRefreshWeatherACB() {
-    const location = await getUserLocationACB();
-    console.log("[weather] got location", location);
-    model.fetchWeatherBanner(location.latitude, location.longitude);
-    console.log("[weather]", model.weatherBannerPromiseState);
-  }
-
-  async function userWantsToRefreshSafetyAlertsACB() {
-    model.setLoading?.(true);
-    try {
-      if (!model.weatherBannerPromiseState.data) {
-        await userWantsToRefreshWeatherACB();
-      }
-      model.updateWeatherAlerts();
-    } catch (error) {
-      console.error("Failed to refresh safety alerts:", error);
-      model.setWeatherAlerts?.([
-        {
-          event: "Safety alerts unavailable",
-          description:
-            error.message === "Location permission denied"
-              ? "Enable location permission to check alerts for your current area."
-              : "We could not load local safety alerts right now.",
-        },
-      ]);
-    } finally {
-      model.setLoading?.(false);
-    }
-  }
-
-  async function userWantsToOpenWeatherDetailsACB() {
-    try {
-      const location = await getUserLocationACB();
-      model.fetchWeatherDetails(location.latitude, location.longitude);
-    } catch (error) {
-      console.error("Failed to load weather details:", error);
-    }
-  }
-
-  // change to use expo library instead
-  async function userWantsToRefreshNewsACB() {
-    try {
-      const location = model.currentLocation;
-      if (!location) return;
-      const [place] = await Location.reverseGeocodeAsync({ latitude: location.latitude, longitude: location.longitude });
-      const city = [place?.city, place?.country].filter(Boolean).join(" ") || null;
-      console.log("[news] city:", city);
-      if (!city) return;
-      // change here for different query.... but search results arent rlly good tbvh
-      model.fetchNews(`${city} AND (safety OR tourist)`);
-    } catch (error) {
-      console.error("Failed to refresh news:", error);
-    }
-  }
-
   async function loadHomeScreenDataACB() {
-    model.setLoading?.(true);
     try {
-      await userWantsToRefreshWeatherACB();
       const location = await getUserLocationACB();
       model.fetchAttractions(location.latitude, location.longitude);
-
-      if (!model.weatherAlerts || model.weatherAlerts.length === 0) {
-        model.updateWeatherAlerts();
-      }
     } catch (error) {
       console.error("Failed to load home screen data:", error);
-      model.setWeatherAlerts?.([
-        {
-          event: "Weather unavailable",
-          description:
-            error.message === "Location permission denied"
-              ? "Enable location permission to show weather for your current position."
-              : "We could not load weather for your location right now.",
-        },
-      ]);
-    } finally {
-      model.setLoading?.(false);
     }
   }
 
@@ -180,20 +108,6 @@ const HomePresenter = observer(function HomePresenter(props) {
     loadHomeScreenDataACB();
   }, []);
 
-  useEffect(
-    function refreshNewsOnLoginACB() {
-      if (model.currentUser) {
-        userWantsToRefreshNewsACB();
-      }
-    },
-    [model.currentUser]
-  );
-
-  const weatherDetailsLoading =
-    !!model.weatherDetailsPromiseState.promise &&
-    !model.weatherDetailsPromiseState.data &&
-    !model.weatherDetailsPromiseState.error;
-
   const placeDetailsLoading =
     !!model.placeDetailsPromiseState.promise &&
     !model.placeDetailsPromiseState.data &&
@@ -203,18 +117,6 @@ const HomePresenter = observer(function HomePresenter(props) {
     <HomeView
       attractions={model.attractionsPromiseState.data || []}
       currentAttraction={model.currentAttraction}
-      currentWeather={
-        model.weatherBannerPromiseState.data
-          ? { ...model.weatherBannerPromiseState.data, ...(model.weatherDetailsPromiseState.data || {}) }
-          : null
-      }
-      weatherAlerts={model.weatherAlerts || []}
-      weatherDetailsLoading={weatherDetailsLoading}
-      onOpenWeatherDetails={userWantsToOpenWeatherDetailsACB}
-      touristNews={model.newsPromiseState.data || []}
-      loadingStatus={model.loadingStatus}
-      onRefreshSafetyAlerts={userWantsToRefreshSafetyAlertsACB}
-      onRefreshNews={userWantsToRefreshNewsACB}
       onSelectAttraction={userWantsToSelectAttractionACB}
       onSeeMoreAttraction={userWantsToSeeMoreAttractionACB}
       placeDetails={model.placeDetailsPromiseState.data}

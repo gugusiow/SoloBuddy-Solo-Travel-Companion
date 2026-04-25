@@ -41,6 +41,15 @@ export default observer(function RootLayout() {
                 }}
             />
             <Tabs.Screen
+                name="safety"
+                options={{
+                    title: "Safety",
+                    tabBarIcon: function renderSafetyTabIconACB() {
+                        return <Text>🛡️</Text>;
+                    },
+                }}
+            />
+            <Tabs.Screen
                 name="community"
                 options={{
                     title: "Community",

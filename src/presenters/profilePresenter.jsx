@@ -2,11 +2,6 @@ import React, { useMemo, useState } from "react";
 import { observer } from "mobx-react-lite";
 import * as ImagePicker from "expo-image-picker";
 import { model } from "../model.js";
-import {
-  signOutUser,
-  saveUserProfile,
-  uploadProfilePhoto,
-} from "/src/firebaseModel.js";
 import ProfileView from "../native-views/profileView.jsx";
 import ProfileEditView from "../native-views/profileEditView.jsx";
 
@@ -79,10 +74,7 @@ export default observer(function ProfilePresenter() {
 
       setUploading(true);
 
-      const uploadedUrl = await uploadProfilePhoto(
-        result.assets[0].uri,
-        user.uid
-      );
+      const uploadedUrl = await model.uploadPhoto(result.assets[0].uri, user.uid);
 
       setForm((prev) => ({
         ...prev,
@@ -103,7 +95,7 @@ export default observer(function ProfilePresenter() {
       setSaving(true);
       setErrorText("");
 
-      await saveUserProfile(user.uid, {
+      await model.saveProfile(user.uid, {
         name: form.name.trim(),
         email: form.email.trim(),
         birthday: form.birthday.trim(),
@@ -121,7 +113,7 @@ export default observer(function ProfilePresenter() {
   }
 
   async function logoutPressedACB() {
-    await signOutUser();
+    await model.logoutUser();
   }
 
   const displayName =

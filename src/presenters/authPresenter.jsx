@@ -2,7 +2,6 @@ import { useState } from "react";
 import { observer } from "mobx-react-lite";
 import * as ImagePicker from "expo-image-picker";
 import { AuthView } from "/src/native-views/authView.jsx";
-import { signUpWithEmail, signInWithEmail, signOutUser, saveUserProfile, uploadProfilePhoto } from "/src/firebaseModel.js";
 
 // handles both login, register, logout.
 //   props.model - the reactive MobX model
@@ -44,28 +43,19 @@ const AuthPresenter = observer(function AuthPresenter(props) {
         setErrorMessage(null);
         try {
             if (isRegisterMode) {
-                const credential = await signUpWithEmail(email, password);
-                const uid = credential.user.uid;
-
-                let avatarUrl = "";
-                if (avatarUri) {
-                    setUploading(true);
-                    try {
-                        avatarUrl = await uploadProfilePhoto(avatarUri, uid);
-                    } finally {
-                        setUploading(false);
-                    }
+                setUploading(!!avatarUri);
+                try {
+                    await model.registerUser(
+                        email,
+                        password,
+                        { name, birthday, phone },
+                        avatarUri
+                    );
+                } finally {
+                    setUploading(false);
                 }
-
-                await saveUserProfile(uid, {
-                    name: name.trim(),
-                    email: email.trim(),
-                    birthday: birthday.trim(),
-                    phone: phone.trim(),
-                    avatarUrl,
-                });
             } else {
-                await signInWithEmail(email, password);
+                await model.loginUser(email, password);
             }
             // onauthstatechanged in _layout.jsx handles updating model.currentUser
         } catch (error) {
@@ -115,4 +105,3 @@ const AuthPresenter = observer(function AuthPresenter(props) {
 });
 
 export default AuthPresenter;
-export { signOutUser };

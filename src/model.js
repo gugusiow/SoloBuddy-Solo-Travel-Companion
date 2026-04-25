@@ -4,6 +4,7 @@ import { resolvePromise } from "./resolvePromise.js";
 import { fetchWeatherBannerACB, fetchWeatherDetailsACB, buildWeatherAlertsACB } from "./services/weatherService.js";
 import { fetchAttractionsACB, fetchPlaceDetailsACB } from "./services/placesService.js";
 import { fetchNewsACB } from "./services/newsService.js";
+import { signInWithEmail, signUpWithEmail, signOutUser, saveUserProfile, uploadProfilePhoto } from "./firebaseModel.js";
 
 class AppModel {
   // promise states for async data
@@ -140,6 +141,39 @@ class AppModel {
 
   clearMapSearchResults() {
     this.mapSearchResults = [];
+  }
+
+  //  auth & profile actions called from firebasemodel
+  async loginUser(email, password) {
+    await signInWithEmail(email, password);
+  }
+
+  async registerUser(email, password, { name, birthday, phone }, avatarUri) {
+    const credential = await signUpWithEmail(email, password);
+    const uid = credential.user.uid;
+    let avatarUrl = "";
+    if (avatarUri) {
+      avatarUrl = await uploadProfilePhoto(avatarUri, uid);
+    }
+    await saveUserProfile(uid, {
+      name: name.trim(),
+      email: email.trim(),
+      birthday: birthday.trim(),
+      phone: phone.trim(),
+      avatarUrl,
+    });
+  }
+
+  async saveProfile(uid, patch) {
+    await saveUserProfile(uid, patch);
+  }
+
+  async uploadPhoto(uri, uid) {
+    return uploadProfilePhoto(uri, uid);
+  }
+
+  async logoutUser() {
+    await signOutUser();
   }
 }
 

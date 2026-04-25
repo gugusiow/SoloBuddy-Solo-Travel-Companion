@@ -4,6 +4,7 @@ import { resolvePromise } from "./resolvePromise.js";
 import { fetchWeatherBannerACB, fetchWeatherDetailsACB, buildWeatherAlertsACB } from "./services/weatherService.js";
 import { fetchAttractionsACB, fetchPlaceDetailsACB } from "./services/placesService.js";
 import { fetchNewsACB } from "./services/newsService.js";
+import { fetchTravelAdvisoryACB } from "./services/travelAdvisoryService.js";
 import { signInWithEmail, signUpWithEmail, signOutUser, saveUserProfile, uploadProfilePhoto } from "./firebaseModel.js";
 
 class AppModel {
@@ -21,6 +22,9 @@ class AppModel {
 
   // news
   newsPromiseState = {};
+
+  // travel advisory
+  travelAdvisoryPromiseState = {};
 
   // auth state
   currentUser = null;
@@ -72,6 +76,11 @@ class AppModel {
   // --- news ---
   fetchNews(query) {
     resolvePromise(fetchNewsACB(query), this.newsPromiseState);
+  }
+
+  // --- travel advisory ---
+  fetchTravelAdvisory(countrySlug) {
+    resolvePromise(fetchTravelAdvisoryACB(countrySlug), this.travelAdvisoryPromiseState);
   }
 
   setCurrentAttraction(attraction) {

@@ -92,6 +92,15 @@ const SafetyPresenter = observer(function SafetyPresenter(props) {
       if (!model.weatherAlerts || model.weatherAlerts.length === 0) {
         model.updateWeatherAlerts();
       }
+      // TODO: some countries does not work, especially countries with >=2 words. but for now i will let it slide first.. 
+      const location = model.currentLocation;
+      if (location) {
+        const [place] = await Location.reverseGeocodeAsync({ latitude: location.latitude, longitude: location.longitude });
+        if (place?.country) {
+          const slug = place.country.toLowerCase().replace(/\s+/g, "-");
+          model.fetchTravelAdvisory(slug);
+        }
+      }
     } catch (error) {
       console.error("Failed to load safety data:", error);
       model.setWeatherAlerts?.([
@@ -128,6 +137,7 @@ const SafetyPresenter = observer(function SafetyPresenter(props) {
 
   return (
     <SafetyView
+      travelAdvisory={model.travelAdvisoryPromiseState.data || null}
       currentWeather={
         model.weatherBannerPromiseState.data
           ? { ...model.weatherBannerPromiseState.data, ...(model.weatherDetailsPromiseState.data || {}) }

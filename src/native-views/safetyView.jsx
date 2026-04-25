@@ -9,12 +9,13 @@ import {
 } from "react-native";
 import { openURL } from "expo-linking";
 import Svg, { Defs, LinearGradient, Stop, Path, Circle } from "react-native-svg";
-import styles from "./homeView.styles.js";
+import styles from "./safetyView.styles.js";
 
 export function SafetyView(props) {
   const [visibleAlerts, setVisibleAlerts] = useState([]);
   const [weatherModalVisible, setWeatherModalVisible] = useState(false);
   const [visibleNewsCount, setVisibleNewsCount] = useState(4);
+  const [advisoryExpanded, setAdvisoryExpanded] = useState(false);
 
   const newsItems = props.touristNews || [];
   const weather = props.currentWeather || null;
@@ -154,6 +155,17 @@ export function SafetyView(props) {
       </Pressable>
     );
   }
+  // updated by xxxx
+  function formatAdvisoryDateACB(isoString) {
+    if (!isoString) return "";
+    const date = new Date(isoString);
+    return date.toLocaleDateString("en-GB", { day: "numeric", month: "short", year: "numeric" });
+  }
+  // reformat the alert array from the api
+  function humanizeAlertACB(alert) {
+    if (!alert) return "";
+    return alert.replace(/_/g, " ").replace(/^\w/, (c) => c.toUpperCase());
+  }
 
   return (
     <View style={{ flex: 1 }}>
@@ -200,6 +212,62 @@ export function SafetyView(props) {
             </View>
           </Pressable>
         ) : null}
+        {/* if the api call fails, which might happen cos geocode return different name from what the API req, then blank. 
+        TODO: Might fix this in the future if got time, but for now it works for *most* countries */}
+        {props.travelAdvisory ? (
+          <View style={styles.advisoryCard}>
+            <View style={styles.advisoryRow}>
+              <View>
+                <Text style={styles.advisorySource}>UK Travel Advice (FCDO)</Text>
+                <Text style={styles.advisoryDate}>
+                  Updated {formatAdvisoryDateACB(props.travelAdvisory.updatedAt)}
+                </Text>
+              </View>
+              <View style={styles.advisoryRight}>
+                <View style={[
+                  styles.advisoryBadge,
+                  props.travelAdvisory.alertStatus.length > 0
+                    ? styles.advisoryBadgeRed
+                    : styles.advisoryBadgeGreen,
+                ]}>
+                  <Text style={styles.advisoryBadgeText}>
+                    {props.travelAdvisory.alertStatus.length > 0 ? "Warning Issued" : "No Warnings"}
+                  </Text>
+                </View>
+                {/* will only show if there is warning  */}
+                <Pressable
+                  onPress={function openAdvisoryACB() { openURL(props.travelAdvisory.webUrl); }}
+                  style={styles.advisoryIconBtn}
+                >
+                  <Text style={styles.advisoryIconText}>↗</Text>
+                </Pressable>
+                {props.travelAdvisory.alertStatus.length > 0 && (
+                  <Pressable
+                    onPress={function toggleAdvisoryACB() { setAdvisoryExpanded(!advisoryExpanded); }}
+                    style={styles.advisoryIconBtn}
+                  >
+                    <Text style={styles.advisoryIconText}>{advisoryExpanded ? "↑" : "↓"}</Text>
+                  </Pressable>
+                )}
+              </View>
+            </View>
+            {advisoryExpanded && props.travelAdvisory.alertStatus.length > 0 && (
+              <View style={styles.advisoryExpandedContent}>
+                {props.travelAdvisory.alertStatus.map(function renderAlertItemACB(alert, i) {
+                  return (
+                    <Text key={i} style={styles.advisoryAlertItem}>
+                      • {humanizeAlertACB(alert)}
+                    </Text>
+                  );
+                })}
+              </View>
+            )}
+          </View>
+        ) : null}
+
+        <Text style={styles.advisoryDisclaimer}>
+          DISCLAIMER: INFORMATION IS AGGREGATED FROM PUBLIC SOURCES. ALWAYS VERIFY WITH OFFICIAL GOVERNMENT ADVISORIES BEFORE TRAVELING.
+        </Text>
 
         {props.loadingStatus ? (
           <Text style={styles.loadingText}>Loading safety data...</Text>

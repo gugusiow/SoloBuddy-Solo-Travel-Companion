@@ -207,18 +207,6 @@ export function SafetyView(props) {
           visibleAlerts.map(renderAlertACB)
         )}
 
-        <View style={styles.buttonWrapper}>
-          <Pressable
-            onPress={props.onRefreshSafetyAlerts}
-            style={({ pressed }) => [
-              styles.refreshButton,
-              pressed && styles.refreshButtonPressed,
-            ]}
-          >
-            <Text style={styles.refreshButtonText}>Refresh safety data</Text>
-          </Pressable>
-        </View>
-
         <View style={styles.newsSectionHeader}>
           <Text style={styles.sectionTitle}>News</Text>
 
@@ -250,7 +238,7 @@ export function SafetyView(props) {
             </>
           ) : (
             <Text style={styles.emptyNewsText}>
-              No important local news for tourist areas right now.
+              No important local news for your location now.
             </Text>
           )}
         </View>

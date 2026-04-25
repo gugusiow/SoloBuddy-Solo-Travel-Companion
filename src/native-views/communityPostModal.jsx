@@ -13,9 +13,9 @@ import {
 const MAX_CHARS = 300;
 
 const CATEGORIES = [
-  { key: "safety", label: "Safety Tip", emoji: "🛡️", color: "#f97316", bg: "#fff7ed" },
+  { key: "safety",     label: "Safety Tip", emoji: "🛡️", color: "#f97316", bg: "#fff7ed" },
   { key: "experience", label: "Experience", emoji: "✈️", color: "#10b981", bg: "#ecfdf5" },
-  { key: "question", label: "Question", emoji: "❓", color: "#3b82f6", bg: "#eff6ff" },
+  { key: "question",   label: "Question",   emoji: "❓", color: "#3b82f6", bg: "#eff6ff" },
 ];
 
 export default function CommunityPostModal({ visible, onClose, onSubmit }) {

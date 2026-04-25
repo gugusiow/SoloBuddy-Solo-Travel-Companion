@@ -1,12 +1,19 @@
-import React from "react";
+import React, { useState } from "react";
 import {
   View,
   Text,
   ScrollView,
   Pressable,
   StyleSheet,
+  TextInput,
 } from "react-native";
 import CommunityPostModal from "./communityPostModal.jsx";
+
+const CATEGORIES = {
+  safety:     { label: "Safety Tip", emoji: "🛡️", color: "#f97316", bg: "#fff7ed" },
+  experience: { label: "Experience", emoji: "✈️", color: "#10b981", bg: "#ecfdf5" },
+  question:   { label: "Question",   emoji: "❓", color: "#3b82f6", bg: "#eff6ff" },
+};
 
 function formatRelativeTimeACB(timestamp) {
   if (!timestamp?.toDate) return "";
@@ -19,12 +26,6 @@ function formatRelativeTimeACB(timestamp) {
   const days = Math.floor(hrs / 24);
   return `${days}d ago`;
 }
-
-const CATEGORIES = {
-  safety:     { label: "Safety Tip", emoji: "🛡️", color: "#f97316", bg: "#fff7ed" },
-  experience: { label: "Experience", emoji: "✈️", color: "#10b981", bg: "#ecfdf5" },
-  question:   { label: "Question",   emoji: "❓", color: "#3b82f6", bg: "#eff6ff" },
-};
 
 function getInitialsACB(name) {
   return (name || "?")
@@ -92,6 +93,13 @@ function PostCard({ post, currentUid, onLike, onDelete }) {
   );
 }
 
+const FILTER_PILLS = [
+  { key: "all", label: "All" },
+  { key: "safety",     label: "🛡️ Safety" },
+  { key: "experience", label: "✈️ Experience" },
+  { key: "question",   label: "❓ Question" },
+];
+
 export default function CommunityView({
   posts,
   currentUid,
@@ -102,6 +110,20 @@ export default function CommunityView({
   onLike,
   onDelete,
 }) {
+  const [filterKeyword, setFilterKeyword] = useState("");
+  const [filterCategory, setFilterCategory] = useState("all");
+
+  const filteredPosts = posts.filter(function filterPostACB(post) {
+    const keyword = filterKeyword.trim().toLowerCase();
+    if (keyword) {
+      const inText = post.text?.toLowerCase().includes(keyword);
+      const inLocation = post.locationTag?.toLowerCase().includes(keyword);
+      if (!inText && !inLocation) return false;
+    }
+    if (filterCategory !== "all" && post.category !== filterCategory) return false;
+    return true;
+  });
+
   return (
     <View style={styles.container}>
       <ScrollView
@@ -113,14 +135,55 @@ export default function CommunityView({
           Share safety tips and travel experiences with fellow solo travellers.
         </Text>
 
-        {posts.length === 0 ? (
+        <View style={styles.searchBar}>
+          <Text style={styles.searchIcon}>🔍</Text>
+          <TextInput
+            style={styles.searchInput}
+            placeholder="Search by keyword or location..."
+            placeholderTextColor="#9ca3af"
+            value={filterKeyword}
+            onChangeText={setFilterKeyword}
+          />
+          {filterKeyword.length > 0 && (
+            <Pressable onPress={() => setFilterKeyword("")} style={styles.clearButton}>
+              <Text style={styles.clearText}>✕</Text>
+            </Pressable>
+          )}
+        </View>
+
+        <ScrollView
+          horizontal
+          showsHorizontalScrollIndicator={false}
+          contentContainerStyle={styles.filterPillsRow}
+        >
+          {FILTER_PILLS.map((pill) => {
+            const active = filterCategory === pill.key;
+            return (
+              <Pressable
+                key={pill.key}
+                onPress={() => setFilterCategory(pill.key)}
+                style={[styles.filterPill, active && styles.filterPillActive]}
+              >
+                <Text style={[styles.filterPillText, active && styles.filterPillTextActive]}>
+                  {pill.label}
+                </Text>
+              </Pressable>
+            );
+          })}
+        </ScrollView>
+
+        {filteredPosts.length === 0 ? (
           <View style={styles.emptyState}>
-            <Text style={styles.emptyEmoji}>✈️</Text>
-            <Text style={styles.emptyText}>No posts yet.</Text>
-            <Text style={styles.emptyHint}>Be the first to share a tip!</Text>
+            <Text style={styles.emptyEmoji}>{posts.length === 0 ? "✈️" : "🔍"}</Text>
+            <Text style={styles.emptyText}>
+              {posts.length === 0 ? "No posts yet." : "No matching posts."}
+            </Text>
+            <Text style={styles.emptyHint}>
+              {posts.length === 0 ? "Be the first to share a tip!" : "Try a different keyword or category."}
+            </Text>
           </View>
         ) : (
-          posts.map((post) => (
+          filteredPosts.map((post) => (
             <PostCard
               key={post.id}
               post={post}
@@ -167,6 +230,75 @@ const styles = StyleSheet.create({
     fontSize: 14,
     color: "#6b7280",
     lineHeight: 20,
+  },
+
+  searchBar: {
+    flexDirection: "row",
+    alignItems: "center",
+    backgroundColor: "#ffffff",
+    borderRadius: 12,
+    paddingHorizontal: 12,
+    height: 46,
+    shadowColor: "#000",
+    shadowOpacity: 0.07,
+    shadowRadius: 6,
+    shadowOffset: { width: 0, height: 2 },
+    elevation: 2,
+  },
+  searchIcon: {
+    fontSize: 15,
+    marginRight: 6,
+  },
+  searchInput: {
+    flex: 1,
+    fontSize: 15,
+    color: "#111827",
+  },
+  clearButton: {
+    paddingLeft: 8,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  clearText: {
+    fontSize: 14,
+    color: "#6b7280",
+    fontWeight: "700",
+  },
+  filterPillsRow: {
+    gap: 8,
+    paddingVertical: 2,
+  },
+  filterPill: {
+    paddingHorizontal: 14,
+    paddingVertical: 7,
+    borderRadius: 999,
+    backgroundColor: "#f1f5f9",
+  },
+  filterPillActive: {
+    backgroundColor: "#111827",
+  },
+  filterPillText: {
+    fontSize: 13,
+    fontWeight: "600",
+    color: "#6b7280",
+  },
+  filterPillTextActive: {
+    color: "#ffffff",
+  },
+  categoryBadge: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 3,
+    paddingHorizontal: 8,
+    paddingVertical: 3,
+    borderRadius: 20,
+  },
+  categoryBadgeEmoji: {
+    fontSize: 11,
+  },
+  categoryBadgeLabel: {
+    fontSize: 11,
+    fontWeight: "700",
   },
 
   // post card

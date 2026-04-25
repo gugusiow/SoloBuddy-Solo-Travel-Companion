@@ -4,7 +4,8 @@ import { resolvePromise } from "./resolvePromise.js";
 import { fetchWeatherBannerACB, fetchWeatherDetailsACB, buildWeatherAlertsACB } from "./services/weatherService.js";
 import { fetchAttractionsACB, fetchPlaceDetailsACB } from "./services/placesService.js";
 import { fetchNewsACB } from "./services/newsService.js";
-import { fetchTravelAdvisoryACB } from "./services/travelAdvisoryService.js";
+import { fetchUKAdvisoryACB } from "./services/ukAdvisoryService.js";
+import { fetchUSAdvisoryACB } from "./services/usAdvisoryService.js";
 import { signInWithEmail, signUpWithEmail, signOutUser, saveUserProfile, uploadProfilePhoto } from "./firebaseModel.js";
 
 class AppModel {
@@ -25,6 +26,7 @@ class AppModel {
 
   // travel advisory
   travelAdvisoryPromiseState = {};
+  usAdvisoryPromiseState = {};
 
   // auth state
   currentUser = null;
@@ -60,6 +62,7 @@ class AppModel {
     resolvePromise(fetchWeatherDetailsACB(lat, lng), this.weatherDetailsPromiseState);
   }
 
+  // TODO: this alert might not be needed? or can change a bit
   updateWeatherAlerts() {
     const weather = this.weatherDetailsPromiseState.data || this.weatherBannerPromiseState.data;
     const alerts = buildWeatherAlertsACB(weather);
@@ -80,7 +83,11 @@ class AppModel {
 
   // --- travel advisory ---
   fetchTravelAdvisory(countrySlug) {
-    resolvePromise(fetchTravelAdvisoryACB(countrySlug), this.travelAdvisoryPromiseState);
+    resolvePromise(fetchUKAdvisoryACB(countrySlug), this.travelAdvisoryPromiseState);
+  }
+
+  fetchUSAdvisory(countryId) {
+    resolvePromise(fetchUSAdvisoryACB(countryId), this.usAdvisoryPromiseState);
   }
 
   setCurrentAttraction(attraction) {

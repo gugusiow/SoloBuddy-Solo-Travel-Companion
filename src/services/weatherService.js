@@ -255,7 +255,7 @@ export async function fetchWeatherDetailsACB(latitude, longitude) {
     dailyForecast: mapDailyForecastACB(dailyData.forecastDays),
   };
 }
-
+  // TODO: this alert might not be needed? or can change a bit
 export function buildWeatherAlertsACB(weather) {
   if (!weather?.condition) {
     return [];

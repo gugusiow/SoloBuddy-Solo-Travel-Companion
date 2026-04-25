@@ -155,6 +155,14 @@ export function SafetyView(props) {
       </Pressable>
     );
   }
+  function getUSLevelBadgeStyleACB(level) {
+    if (level === 1) return styles.advisoryBadgeUSL1;
+    if (level === 2) return styles.advisoryBadgeUSL2;
+    if (level === 3) return styles.advisoryBadgeUSL3;
+    if (level === 4) return styles.advisoryBadgeUSL4;
+    return styles.advisoryBadgeUSL1;
+  }
+
   // updated by xxxx
   function formatAdvisoryDateACB(isoString) {
     if (!isoString) return "";
@@ -212,8 +220,34 @@ export function SafetyView(props) {
             </View>
           </Pressable>
         ) : null}
-        {/* if the api call fails, which might happen cos geocode return different name from what the API req, then blank. 
-        TODO: Might fix this in the future if got time, but for now it works for *most* countries */}
+        {/* if the api call fails, which might happen cos expo's geocode return different name from what the API req, then blank.
+        TODO: Might fix this in the future if got time, but for now it works for *most* countries */}        
+        {props.usAdvisory ? (
+          <View style={styles.advisoryCard}>
+            <View style={styles.advisoryRow}>
+              <View>
+                <Text style={styles.advisorySource}>US State Dept</Text>
+                <Text style={styles.advisoryDate}>
+                  Updated {formatAdvisoryDateACB(props.usAdvisory.updatedAt)}
+                </Text>
+              </View>
+              <View style={styles.advisoryRight}>
+                <View style={[styles.advisoryBadge, getUSLevelBadgeStyleACB(props.usAdvisory.level)]}>
+                  <Text style={styles.advisoryBadgeText}>
+                    {props.usAdvisory.level ? `Lvl ${props.usAdvisory.level}` : "--"}
+                  </Text>
+                </View>
+                <Pressable
+                  onPress={function openUSAdvisoryACB() { openURL(props.usAdvisory.webUrl); }}
+                  style={styles.advisoryIconBtn}
+                >
+                  <Text style={styles.advisoryIconText}>↗</Text>
+                </Pressable>
+              </View>
+            </View>
+          </View>
+        ) : null}
+
         {props.travelAdvisory ? (
           <View style={styles.advisoryCard}>
             <View style={styles.advisoryRow}>
@@ -227,8 +261,8 @@ export function SafetyView(props) {
                 <View style={[
                   styles.advisoryBadge,
                   props.travelAdvisory.alertStatus.length > 0
-                    ? styles.advisoryBadgeRed
-                    : styles.advisoryBadgeGreen,
+                    ? styles.advisoryBadgeUKRed
+                    : styles.advisoryBadgeUKGreen,
                 ]}>
                   <Text style={styles.advisoryBadgeText}>
                     {props.travelAdvisory.alertStatus.length > 0 ? "Warning Issued" : "No Warnings"}

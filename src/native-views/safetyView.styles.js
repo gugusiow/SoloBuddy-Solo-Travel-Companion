@@ -541,10 +541,12 @@ const styles = StyleSheet.create({
   advisoryCard: {
     marginHorizontal: 16,
     marginBottom: 12,
-    backgroundColor: "#1e293b",
+    backgroundColor: "#e2e8f0",
     borderRadius: 16,
     paddingHorizontal: 16,
     paddingVertical: 14,
+    borderWidth: 1,
+    borderColor: "#cbd5e1",
   },
   advisoryRow: {
     flexDirection: "row",
@@ -554,11 +556,11 @@ const styles = StyleSheet.create({
   advisorySource: {
     fontSize: 15,
     fontWeight: "700",
-    color: "#f1f5f9",
+    color: "#0f172a",
   },
   advisoryDate: {
     fontSize: 12,
-    color: "#94a3b8",
+    color: "#64748b",
     marginTop: 2,
   },
   advisoryRight: {
@@ -571,10 +573,24 @@ const styles = StyleSheet.create({
     paddingVertical: 4,
     borderRadius: 8,
   },
-  advisoryBadgeGreen: {
+  // UK badge colors
+  advisoryBadgeUKGreen: {
     backgroundColor: "#166534",
   },
-  advisoryBadgeRed: {
+  advisoryBadgeUKRed: {
+    backgroundColor: "#7f1d1d",
+  },
+  // US level badge colors
+  advisoryBadgeUSL1: {
+    backgroundColor: "#166534",
+  },
+  advisoryBadgeUSL2: {
+    backgroundColor: "#854d0e",
+  },
+  advisoryBadgeUSL3: {
+    backgroundColor: "#9a3412",
+  },
+  advisoryBadgeUSL4: {
     backgroundColor: "#7f1d1d",
   },
   advisoryBadgeText: {
@@ -587,7 +603,7 @@ const styles = StyleSheet.create({
   },
   advisoryIconText: {
     fontSize: 16,
-    color: "#94a3b8",
+    color: "#64748b",
   },
   advisoryExpandedContent: {
     marginTop: 12,

@@ -2,6 +2,7 @@ import { useEffect } from "react";
 import { observer } from "mobx-react-lite";
 import * as Location from "expo-location";
 import { SafetyView } from "../native-views/safetyView.jsx";
+import { getUSAdvisoryId } from "../services/usAdvisoryCountryMap.js";
 
 const SafetyPresenter = observer(function SafetyPresenter(props) {
   const model = props.model;
@@ -46,7 +47,7 @@ const SafetyPresenter = observer(function SafetyPresenter(props) {
       console.error("Failed to load weather details:", error);
     }
   }
-
+  // TODO: this alert might not be needed? or can change a bit
   async function userWantsToRefreshSafetyAlertsACB() {
     model.setLoading?.(true);
     try {
@@ -99,6 +100,8 @@ const SafetyPresenter = observer(function SafetyPresenter(props) {
         if (place?.country) {
           const slug = place.country.toLowerCase().replace(/\s+/g, "-");
           model.fetchTravelAdvisory(slug);
+          const usId = getUSAdvisoryId(place.country);
+          if (usId) model.fetchUSAdvisory(usId);
         }
       }
     } catch (error) {
@@ -137,6 +140,7 @@ const SafetyPresenter = observer(function SafetyPresenter(props) {
 
   return (
     <SafetyView
+      usAdvisory={model.usAdvisoryPromiseState.data || null}
       travelAdvisory={model.travelAdvisoryPromiseState.data || null}
       currentWeather={
         model.weatherBannerPromiseState.data

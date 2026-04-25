@@ -1,4 +1,4 @@
-export async function fetchTravelAdvisoryACB(countrySlug) {
+export async function fetchUKAdvisoryACB(countrySlug) {
   const response = await fetch(
     `https://www.gov.uk/api/content/foreign-travel-advice/${countrySlug}`
   );

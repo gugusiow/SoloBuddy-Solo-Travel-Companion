@@ -12,18 +12,26 @@ import {
 
 const MAX_CHARS = 300;
 
+const CATEGORIES = [
+  { key: "safety", label: "Safety Tip", emoji: "🛡️", color: "#f97316", bg: "#fff7ed" },
+  { key: "experience", label: "Experience", emoji: "✈️", color: "#10b981", bg: "#ecfdf5" },
+  { key: "question", label: "Question", emoji: "❓", color: "#3b82f6", bg: "#eff6ff" },
+];
+
 export default function CommunityPostModal({ visible, onClose, onSubmit }) {
   const [text, setText] = useState("");
   const [locationTag, setLocationTag] = useState("");
+  const [category, setCategory] = useState("experience");
   const [submitting, setSubmitting] = useState(false);
 
   async function handleSubmitACB() {
     if (!text.trim() || submitting) return;
     setSubmitting(true);
     try {
-      await onSubmit(text, locationTag);
+      await onSubmit(text, locationTag, category);
       setText("");
       setLocationTag("");
+      setCategory("experience");
     } finally {
       setSubmitting(false);
     }
@@ -32,6 +40,7 @@ export default function CommunityPostModal({ visible, onClose, onSubmit }) {
   function handleCloseACB() {
     setText("");
     setLocationTag("");
+    setCategory("experience");
     onClose();
   }
 
@@ -60,6 +69,27 @@ export default function CommunityPostModal({ visible, onClose, onSubmit }) {
               >
                 <Text style={styles.closeText}>✕</Text>
               </Pressable>
+            </View>
+
+            <View style={styles.categoryRow}>
+              {CATEGORIES.map((cat) => {
+                const selected = category === cat.key;
+                return (
+                  <Pressable
+                    key={cat.key}
+                    onPress={() => setCategory(cat.key)}
+                    style={[
+                      styles.categoryPill,
+                      { borderColor: cat.color, backgroundColor: selected ? cat.bg : "#f9fafb" },
+                    ]}
+                  >
+                    <Text style={styles.categoryEmoji}>{cat.emoji}</Text>
+                    <Text style={[styles.categoryLabel, { color: selected ? cat.color : "#6b7280" }]}>
+                      {cat.label}
+                    </Text>
+                  </Pressable>
+                );
+              })}
             </View>
 
             <TextInput
@@ -154,6 +184,27 @@ const styles = StyleSheet.create({
     fontSize: 14,
     color: "#6b7280",
     fontWeight: "700",
+  },
+  categoryRow: {
+    flexDirection: "row",
+    gap: 8,
+  },
+  categoryPill: {
+    flex: 1,
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+    gap: 4,
+    paddingVertical: 8,
+    borderRadius: 10,
+    borderWidth: 1.5,
+  },
+  categoryEmoji: {
+    fontSize: 14,
+  },
+  categoryLabel: {
+    fontSize: 12,
+    fontWeight: "600",
   },
   textInput: {
     borderWidth: 1,

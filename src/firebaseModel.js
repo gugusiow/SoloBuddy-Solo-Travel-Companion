@@ -217,13 +217,14 @@ export function listenToCommunityPosts(onUpdate) {
   };
 }
 
-export function addCommunityPost(uid, authorName, authorAvatar, text, locationTag) {
+export function addCommunityPost(uid, authorName, authorAvatar, text, locationTag, category) {
   return addDoc(collection(db, "communityPosts"), {
     authorUid: uid,
     authorName: authorName || "Anonymous",
     authorAvatar: authorAvatar || "",
     text,
     locationTag: locationTag || "",
+    category: category || "experience",
     likedBy: [],
     createdAt: serverTimestamp(),
   });

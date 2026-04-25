@@ -17,7 +17,7 @@ export const CommunityPresenter = observer(function CommunityPresenter({ model }
     });
   }, []);
 
-  async function userWantsToSubmitPostACB(text, locationTag) {
+  async function userWantsToSubmitPostACB(text, locationTag, category) {
     if (!model.currentUser?.uid || !text.trim()) return;
 
     const name = model.profile?.name || model.currentUser.displayName || "Anonymous";
@@ -28,7 +28,8 @@ export const CommunityPresenter = observer(function CommunityPresenter({ model }
       name,
       avatar,
       text.trim(),
-      locationTag.trim()
+      locationTag.trim(),
+      category
     );
     setPostModalVisible(false);
   }

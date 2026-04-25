@@ -20,6 +20,12 @@ function formatRelativeTimeACB(timestamp) {
   return `${days}d ago`;
 }
 
+const CATEGORIES = {
+  safety:     { label: "Safety Tip", emoji: "🛡️", color: "#f97316", bg: "#fff7ed" },
+  experience: { label: "Experience", emoji: "✈️", color: "#10b981", bg: "#ecfdf5" },
+  question:   { label: "Question",   emoji: "❓", color: "#3b82f6", bg: "#eff6ff" },
+};
+
 function getInitialsACB(name) {
   return (name || "?")
     .split(" ")
@@ -47,6 +53,14 @@ function PostCard({ post, currentUid, onLike, onDelete }) {
             <Text style={styles.locationTag}>📍 {post.locationTag}</Text>
           )}
         </View>
+        {post.category && CATEGORIES[post.category] && (
+          <View style={[styles.categoryBadge, { backgroundColor: CATEGORIES[post.category].bg }]}>
+            <Text style={styles.categoryBadgeEmoji}>{CATEGORIES[post.category].emoji}</Text>
+            <Text style={[styles.categoryBadgeLabel, { color: CATEGORIES[post.category].color }]}>
+              {CATEGORIES[post.category].label}
+            </Text>
+          </View>
+        )}
         <Text style={styles.timestamp}>{formatRelativeTimeACB(post.createdAt)}</Text>
       </View>
 
@@ -197,6 +211,21 @@ const styles = StyleSheet.create({
   locationTag: {
     fontSize: 12,
     color: "#6b7280",
+  },
+  categoryBadge: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 3,
+    paddingHorizontal: 8,
+    paddingVertical: 3,
+    borderRadius: 20,
+  },
+  categoryBadgeEmoji: {
+    fontSize: 11,
+  },
+  categoryBadgeLabel: {
+    fontSize: 11,
+    fontWeight: "700",
   },
   timestamp: {
     fontSize: 12,

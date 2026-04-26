@@ -3,7 +3,7 @@ const GOOGLE_API_KEY = process.env.EXPO_PUBLIC_GOOGLE_API_KEY;
 export async function searchPlacesByTextACB(query, lat, lng) {
   const body = {
     textQuery: query,
-    maxResultCount: 10,
+    maxResultCount: 20,
   };
 
   if (lat != null && lng != null) {
@@ -117,7 +117,7 @@ export async function fetchAttractionsACB(latitude, longitude) {
       },
       body: JSON.stringify({
         includedTypes: ["tourist_attraction", "museum", "park"],
-        maxResultCount: 10,
+        maxResultCount: 20,
         locationRestriction: {
           circle: {
             center: { latitude, longitude },

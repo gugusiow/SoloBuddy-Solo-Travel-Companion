@@ -8,6 +8,7 @@ import {
 import MapView, { Marker } from "react-native-maps";
 import * as Location from "expo-location";
 
+// rmb its stockholm default location if any issue w loc 
 const DEFAULT_REGION = {
   latitude: 59.3293,
   longitude: 18.0686,

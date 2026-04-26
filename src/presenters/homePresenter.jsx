@@ -91,7 +91,8 @@ const HomePresenter = observer(function HomePresenter(props) {
       return;
     }
     const attraction = model.currentAttraction;
-    // set the fields of the wishlist cards 
+    console.log("Attraction added to wishlist:", attraction);
+    // set the fields of the wishlist cards
     await setWishlistItem(model.currentUser.uid, {
       id: attraction.id,
       name: attraction.name || "Untitled",
@@ -99,8 +100,8 @@ const HomePresenter = observer(function HomePresenter(props) {
       imageUrl: attraction.imageUrl || "",
       description: attraction.shortDescription || "",
       userRating: attraction.userRating ?? null,
-      lat: attraction.lat ?? null,
-      lng: attraction.lng ?? null,
+      lat: attraction.latitude ?? null,
+      lng: attraction.longitude ?? null,
     });
   }
 

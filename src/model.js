@@ -6,7 +6,7 @@ import { fetchAttractionsACB, fetchPlaceDetailsACB } from "./services/placesServ
 import { fetchNewsACB } from "./services/newsService.js";
 import { fetchUKAdvisoryACB } from "./services/ukAdvisoryService.js";
 import { fetchUSAdvisoryACB } from "./services/usAdvisoryService.js";
-import { signInWithEmail, signUpWithEmail, signOutUser, saveUserProfile, uploadProfilePhoto } from "./firebaseModel.js";
+import { signInWithEmail, signUpWithEmail, signOutUser, saveUserProfile, uploadProfilePhoto, setWishlistItem } from "./firebaseModel.js";
 
 class AppModel {
   // promise states for async data
@@ -190,6 +190,20 @@ class AppModel {
 
   async logoutUser() {
     await signOutUser();
+  }
+
+  async addToWishlist(attraction) {
+    if (!this.currentUser?.uid || !attraction?.id) return;
+    await setWishlistItem(this.currentUser.uid, {
+      id: attraction.id,
+      name: attraction.name || "Untitled",
+      location: attraction.location || "",
+      imageUrl: attraction.imageUrl || "",
+      description: attraction.shortDescription || "",
+      userRating: attraction.userRating ?? null,
+      lat: attraction.latitude ?? null,
+      lng: attraction.longitude ?? null,
+    });
   }
 }
 

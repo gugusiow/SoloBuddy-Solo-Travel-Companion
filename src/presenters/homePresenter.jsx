@@ -2,7 +2,6 @@ import { useEffect } from "react";
 import { observer } from "mobx-react-lite";
 import * as Location from "expo-location";
 import { HomeView } from "../native-views/homeView.jsx";
-import { setWishlistItem } from "../firebaseModel.js";
 import { searchPlacesByTextACB } from "../services/placesService.js";
 
 const HomePresenter = observer(function HomePresenter(props) {
@@ -86,23 +85,8 @@ const HomePresenter = observer(function HomePresenter(props) {
 
   // save attraction into the user's wishlist
   async function userWantsToAddToWishlistACB() {
-    // check to make sure it's the actual user
-    if (!model.currentUser || !model.currentAttraction?.id) {
-      return;
-    }
-    const attraction = model.currentAttraction;
-    console.log("Attraction added to wishlist:", attraction);
-    // set the fields of the wishlist cards
-    await setWishlistItem(model.currentUser.uid, {
-      id: attraction.id,
-      name: attraction.name || "Untitled",
-      location: attraction.location || "",
-      imageUrl: attraction.imageUrl || "",
-      description: attraction.shortDescription || "",
-      userRating: attraction.userRating ?? null,
-      lat: attraction.latitude ?? null,
-      lng: attraction.longitude ?? null,
-    });
+    console.log("Attraction added to wishlist:", model.currentAttraction);
+    await model.addToWishlist(model.currentAttraction);
   }
 
   useEffect(function loadInitialDataACB() {

@@ -1,7 +1,7 @@
 import React, { useEffect } from "react";
 import { observer } from "mobx-react-lite";
 import WishlistView from "../native-views/wishlistView.jsx";
-import { listenToWishlist, removeWishlistItem } from "../firebaseModel.js";
+import { listenToWishlist, removeWishlistItem, markWishlistItemVisited } from "../firebaseModel.js";
 
 export const WishlistPresenter = observer(function WishlistPresenter({ model }) {
   useEffect(
@@ -10,7 +10,7 @@ export const WishlistPresenter = observer(function WishlistPresenter({ model }) 
         model.setWishlist([]);
         return;
       }
-      
+
       // keep the local wishlist in sync with Firestore for the logged-in user
       return listenToWishlist(model.currentUser.uid, function onWishlistUpdateACB(items) {
         model.setWishlist(items);
@@ -28,9 +28,25 @@ export const WishlistPresenter = observer(function WishlistPresenter({ model }) 
     await removeWishlistItem(model.currentUser.uid, itemId);
   }
 
-  // load the current wishlist items from the mdoel
-  const items = model.wishlist || [];
-  return <WishlistView items={items} onRemoveItem={removeItemACB} />;
+  // ACB to toggle visited state on a wishlist item
+  async function markVisitedACB(itemId, visited) {
+    if (!model.currentUser?.uid || !itemId) return;
+    await markWishlistItemVisited(model.currentUser.uid, itemId, visited);
+  }
+
+  // load the current wishlist items from the model, split into active and visited
+  const allItems = model.wishlist || [];
+  const activeItems = allItems.filter((item) => !item.visited);
+  const visitedItems = allItems.filter((item) => item.visited);
+
+  return (
+    <WishlistView
+      activeItems={activeItems}
+      visitedItems={visitedItems}
+      onRemoveItem={removeItemACB}
+      onMarkVisited={markVisitedACB}
+    />
+  );
 });
 
 export default WishlistPresenter;

@@ -152,7 +152,12 @@ export async function uploadProfilePhoto(uri, uid) {
 // add or replace one wishlist item (use attraction.id as the doc id)
 export function setWishlistItem(uid, item) {
   const ref = doc(db, "users", uid, "wishlist", item.id);
-  return setDoc(ref, { ...item, createdAt: serverTimestamp() });
+  return setDoc(ref, { ...item, visited: false, createdAt: serverTimestamp() });
+}
+
+export function markWishlistItemVisited(uid, itemId, visited) {
+  const ref = doc(db, "users", uid, "wishlist", itemId);
+  return updateDoc(ref, { visited });
 }
 
 // remove wishlist item

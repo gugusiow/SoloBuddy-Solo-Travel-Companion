@@ -34,7 +34,7 @@ export default function WishlistView({
               <Text style={styles.itinerarySummary}>{itineraryData.summary}</Text>
             ) : null}
             <Text style={styles.aiWarningText}>
-              ⚠️ This itinerary is AI generated. Please verify details before your trip.
+              ⚠️ This is AI generated. Please verify details before your trip.
             </Text>
             {(itineraryData.days || []).map((day, dayIdx) => (
               <View key={day.day ?? dayIdx} style={[styles.card, styles.dayCard]}>

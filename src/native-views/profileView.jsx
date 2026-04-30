@@ -57,12 +57,12 @@ export default function ProfileView(props) {
 const styles = StyleSheet.create({
   container: {
     flexGrow: 1,
-    backgroundColor: "#f5f7fb",
+    backgroundColor: "#F5E8D3",
     padding: 20,
     justifyContent: "center",
   },
   card: {
-    backgroundColor: "#ffffff",
+    backgroundColor: "#D9C5B2",
     borderRadius: 20,
     padding: 24,
     shadowColor: "#000",
@@ -85,7 +85,7 @@ const styles = StyleSheet.create({
     width: 110,
     height: 110,
     borderRadius: 55,
-    backgroundColor: "#4f46e5",
+    backgroundColor: "#523A34",
     alignItems: "center",
     justifyContent: "center",
     marginBottom: 16,

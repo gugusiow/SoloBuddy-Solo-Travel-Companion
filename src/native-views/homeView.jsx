@@ -183,6 +183,28 @@ export function HomeView(props) {
             )}
           </View>
 
+          {props.mapSearchResults?.length > 0 ? (
+            <View style={styles.searchResultsContainer}>
+              <Text style={styles.searchResultsTitle}>
+                {props.mapSearchResults.length} result{props.mapSearchResults.length !== 1 ? "s" : ""}
+              </Text>
+              {props.mapSearchResults.map((result, index) => (
+                <Pressable
+                  key={`search-result-${index}-${String(result.id ?? result.name)}`}
+                  style={styles.searchResultItem}
+                  onPress={function onPressSearchResultACB() {
+                    userWantsToSeeMoreACB(result);
+                  }}
+                >
+                  <Text style={styles.searchResultName}>{result.name}</Text>
+                  {result.location ? (
+                    <Text style={styles.searchResultLocation}>{result.location}</Text>
+                  ) : null}
+                </Pressable>
+              ))}
+            </View>
+          ) : null}
+
           <View style={styles.mapSection}>
             <AttractionsMap
               attractions={baseAttractions}

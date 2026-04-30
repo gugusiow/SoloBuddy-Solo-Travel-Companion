@@ -19,6 +19,7 @@ export function HomeView(props) {
   // added some variables to use for attraction card animation
   const scrollX = useRef(new Animated.Value(0)).current;
   const flatListRef = useRef(null);
+  const searchTimeoutRef = useRef(null);
   const [listWidth, setListWidth] = useState(Dimensions.get("window").width);
   const [attractionModalVisible, setAttractionModalVisible] = useState(false);
   const [mapQuery, setMapQuery] = useState("");
@@ -143,14 +144,47 @@ export function HomeView(props) {
     return `${item.id ?? "item"}-${index}`;
   }
 
+  function handleMapQueryChangeACB(text) {
+    setMapQuery(text);
+
+    if (searchTimeoutRef.current) {
+      clearTimeout(searchTimeoutRef.current);
+    }
+
+    if (!text.trim()) {
+      props.onClearSearch?.();
+      return;
+    }
+
+    searchTimeoutRef.current = setTimeout(function performSearchACB() {
+      props.onSearchPlaces?.(text.trim());
+    }, 300);
+  }
+
   function handleMapSearchSubmitACB() {
+    if (searchTimeoutRef.current) {
+      clearTimeout(searchTimeoutRef.current);
+      searchTimeoutRef.current = null;
+    }
     if (mapQuery.trim()) props.onSearchPlaces?.(mapQuery);
   }
 
   function handleMapClearACB() {
+    if (searchTimeoutRef.current) {
+      clearTimeout(searchTimeoutRef.current);
+      searchTimeoutRef.current = null;
+    }
     setMapQuery("");
     props.onClearSearch?.();
   }
+
+  useEffect(function cleanupSearchTimerACB() {
+    return function cleanupACB() {
+      if (searchTimeoutRef.current) {
+        clearTimeout(searchTimeoutRef.current);
+      }
+    };
+  }, []);
 
   return (
     <View style={{ flex: 1 }}>
@@ -166,7 +200,7 @@ export function HomeView(props) {
               placeholder="Search places..."
               placeholderTextColor="#9ca3af"
               value={mapQuery}
-              onChangeText={setMapQuery}
+              onChangeText={handleMapQueryChangeACB}
               onSubmitEditing={handleMapSearchSubmitACB}
               returnKeyType="search"
             />

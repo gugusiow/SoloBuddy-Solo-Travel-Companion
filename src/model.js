@@ -6,6 +6,7 @@ import { fetchAttractionsACB, fetchPlaceDetailsACB } from "./services/placesServ
 import { fetchNewsACB } from "./services/newsService.js";
 import { fetchUKAdvisoryACB } from "./services/ukAdvisoryService.js";
 import { fetchUSAdvisoryACB } from "./services/usAdvisoryService.js";
+import { generateItineraryACB } from "./services/openRouterService.js";
 import { signInWithEmail, signUpWithEmail, signOutUser, saveUserProfile, uploadProfilePhoto, setWishlistItem } from "./firebaseModel.js";
 
 class AppModel {
@@ -27,6 +28,9 @@ class AppModel {
   // travel advisory
   travelAdvisoryPromiseState = {};
   usAdvisoryPromiseState = {};
+
+  // ai itinerary generation
+  itineraryPromiseState = {};
 
   // auth state
   currentUser = null;
@@ -191,6 +195,22 @@ class AppModel {
   async logoutUser() {
     await signOutUser();
   }
+
+  // ai itinerary
+  generateItinerary() {
+    const active = (this.wishlist || []).filter(function isActiveACB(item) {
+      return !item.visited;
+    });
+    if (active.length < 5) return;
+    resolvePromise(generateItineraryACB(active), this.itineraryPromiseState);
+  }
+
+  // clear ai gen itinerary when active wishlist changes can be add/remove/visited
+  // clearItinerary() {
+  //   this.itineraryPromiseState.promise = null;
+  //   this.itineraryPromiseState.data = null;
+  //   this.itineraryPromiseState.error = null;
+  // }
 
   async addToWishlist(attraction) {
     if (!this.currentUser?.uid || !attraction?.id) return;

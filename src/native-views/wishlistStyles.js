@@ -65,6 +65,14 @@ export const styles = StyleSheet.create({
     paddingHorizontal: 10,
     borderRadius: 6,
   },
+  undoButton: {
+    paddingVertical: 6,
+    paddingHorizontal: 10,
+    borderRadius: 6,
+    backgroundColor: "#6b7280",
+    alignSelf: "flex-start",
+    marginTop: 4,
+  },
   visitedHeader: {
     flexDirection: "row",
     justifyContent: "space-between",

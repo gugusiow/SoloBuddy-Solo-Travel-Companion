@@ -73,7 +73,7 @@ export default observer(function RootLayout() {
             <Tabs.Screen
                 name="wishlist"
                 options={{
-                    title: "Wishlist",
+                    title: "My Trip",
                     headerStyle: {
                         backgroundColor: "#a61b2e", 
                     },

@@ -72,112 +72,151 @@ export default function WishlistView({ activeItems = [], visitedItems = [], onRe
   );
 }
 
+const COLORS = {
+  primary: "#4F46E5",   // purple/blue
+  success: "#10B981",   // green
+  danger: "#EF4444",    // red
+  background: "#F3F4F6",
+  card: "#FFFFFF",
+  text: "#111827",
+  subtext: "#6B7280",
+};
+
 const styles = StyleSheet.create({
   container: {
     padding: 16,
+    backgroundColor: COLORS.background,
+    flexGrow: 1,
   },
+
   title: {
-    fontSize: 22,
+    fontSize: 24,
     fontWeight: "700",
-    marginBottom: 12,
+    marginBottom: 16,
+    color: COLORS.text,
   },
+
   empty: {
-    padding: 20,
+    padding: 30,
     alignItems: "center",
     justifyContent: "center",
   },
+
   emptyText: {
     fontSize: 16,
-    color: "#666",
+    color: COLORS.subtext,
   },
+
   card: {
-    backgroundColor: "#fff",
-    borderRadius: 8,
-    padding: 12,
-    marginBottom: 12,
+    backgroundColor: COLORS.card,
+    borderRadius: 14,
+    padding: 16,
+    marginBottom: 14,
     shadowColor: "#000",
-    shadowOpacity: 0.05,
-    shadowRadius: 6,
-    elevation: 2,
+    shadowOpacity: 0.08,
+    shadowRadius: 10,
+    elevation: 3,
   },
+
   cardTitle: {
-    fontSize: 16,
+    fontSize: 18,
     fontWeight: "600",
-    marginBottom: 6,
+    marginBottom: 4,
+    color: COLORS.text,
   },
+
   cardSubtitle: {
     fontSize: 14,
-    color: "#444",
+    color: COLORS.subtext,
     marginBottom: 8,
   },
+
   location: {
     fontSize: 13,
-    color: "#6b7280",
-    marginBottom: 8,
+    color: "#9CA3AF",
+    marginBottom: 10,
   },
+
   cardActions: {
     flexDirection: "row",
-    gap: 8,
-    marginTop: 4,
+    gap: 10,
+    marginTop: 6,
   },
-  button: {
-    paddingVertical: 6,
-    paddingHorizontal: 10,
-    backgroundColor: "#000000",
-    borderRadius: 6,
-  },
-  buttonText: {
-    color: "#fff",
-    fontWeight: "600",
-  },
+
+  // Primary button
   visitedButton: {
-    paddingVertical: 6,
-    paddingHorizontal: 10,
-    backgroundColor: "#10b981",
-    borderRadius: 6,
+    flex: 1,
+    paddingVertical: 10,
+    borderRadius: 10,
+    backgroundColor: COLORS.success,
+    alignItems: "center",
   },
+
   visitedButtonText: {
     color: "#fff",
     fontWeight: "600",
   },
-  visitedSection: {
-    marginTop: 8,
+
+  // Secondary button
+  button: {
+    flex: 1,
+    paddingVertical: 10,
+    borderRadius: 10,
+    backgroundColor: COLORS.danger,
+    alignItems: "center",
   },
+
+  buttonText: {
+    color: "#fff",
+    fontWeight: "600",
+  },
+
+  visitedSection: {
+    marginTop: 10,
+  },
+
   visitedHeader: {
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
-    paddingVertical: 12,
+    paddingVertical: 14,
     borderTopWidth: 1,
-    borderTopColor: "#e5e7eb",
+    borderTopColor: "#E5E7EB",
   },
+
   visitedHeaderText: {
-    fontSize: 15,
+    fontSize: 16,
     fontWeight: "600",
-    color: "#10b981",
+    color: COLORS.success,
   },
+
   chevron: {
     fontSize: 12,
-    color: "#6b7280",
+    color: COLORS.subtext,
   },
+
   visitedCard: {
-    opacity: 0.6,
-    backgroundColor: "#f9fafb",
+    opacity: 0.7,
+    backgroundColor: "#F9FAFB",
   },
+
   visitedCardTitle: {
-    color: "#6b7280",
+    color: COLORS.subtext,
   },
+
   visitedText: {
-    color: "#9ca3af",
+    color: "#9CA3AF",
   },
+
   undoButton: {
     alignSelf: "flex-start",
-    paddingVertical: 6,
-    paddingHorizontal: 10,
-    backgroundColor: "#6b7280",
-    borderRadius: 6,
-    marginTop: 4,
+    paddingVertical: 8,
+    paddingHorizontal: 12,
+    backgroundColor: "#374151",
+    borderRadius: 8,
+    marginTop: 6,
   },
+
   undoButtonText: {
     color: "#fff",
     fontWeight: "600",

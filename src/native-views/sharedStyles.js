@@ -1,7 +1,7 @@
 export const shared = {
   container: {
     flex: 1,
-    backgroundColor: "#f8fafc",
+    backgroundColor: "#eeeeee",
   },
   contentContainer: {
     paddingTop: 16,

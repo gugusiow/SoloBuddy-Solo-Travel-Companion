@@ -62,7 +62,7 @@ export default observer(function RootLayout() {
                 options={{
                     title: "Community",
                     headerStyle: {
-                        backgroundColor: "#d85eba", 
+                        backgroundColor: "#a10079", 
                     },
                     headerTintColor: "#fff", // text color
                     tabBarIcon: function renderCommunityTabIconACB() {

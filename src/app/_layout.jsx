@@ -62,6 +62,10 @@ export default observer(function RootLayout() {
                 name="wishlist"
                 options={{
                     title: "Wishlist",
+                    headerStyle: {
+                        backgroundColor: "#a61b2e", 
+                    },
+                    headerTintColor: "#fff", // text color
                     tabBarIcon: function renderWishlistTabIconACB() {
                         return <Text>❤️</Text>;
                     },

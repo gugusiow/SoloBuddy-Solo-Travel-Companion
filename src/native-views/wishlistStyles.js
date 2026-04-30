@@ -44,6 +44,17 @@ export const styles = StyleSheet.create({
     color: "#6b7280",
     marginBottom: 8,
   },
+  cardRow: {
+    flexDirection: "row",
+    gap: 12,
+    marginBottom: 8,
+  },
+  cardImage: {
+    width: 72,
+    height: 72,
+    borderRadius: 6,
+    backgroundColor: "#e5e7eb",
+  },
   cardActions: {
     flexDirection: "row",
     gap: 8,

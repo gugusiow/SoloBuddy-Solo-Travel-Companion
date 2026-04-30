@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { ScrollView, View, Text, Pressable, ActivityIndicator } from "react-native";
+import { ScrollView, View, Text, Pressable, ActivityIndicator, Image } from "react-native";
 import { styles } from "./wishlistStyles";
 
 export default function WishlistView({
@@ -64,9 +64,16 @@ export default function WishlistView({
       ) : (
         activeItems.map((it, idx) => (
           <View key={it.id || idx} style={styles.card}>
-            <Text style={styles.cardTitle}>{it.name || it.title || "Untitled"}</Text>
-            {it.location ? <Text style={styles.location}>{it.location}</Text> : null}
-            {it.description ? <Text style={styles.cardSubtitle}>{it.description}</Text> : null}
+            <View style={styles.cardRow}>
+              {it.imageUrl ? (
+                <Image source={{ uri: it.imageUrl }} style={styles.cardImage} />
+              ) : null}
+              <View style={{ flex: 1 }}>
+                <Text style={styles.cardTitle}>{it.name || it.title || "Untitled"}</Text>
+                {it.location ? <Text style={styles.location}>{it.location}</Text> : null}
+                {it.description ? <Text style={styles.cardSubtitle}>{it.description}</Text> : null}
+              </View>
+            </View>
 
             <View style={styles.cardActions}>
               {/* mark as visited button */}

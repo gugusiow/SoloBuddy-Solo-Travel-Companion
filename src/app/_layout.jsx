@@ -34,6 +34,10 @@ export default observer(function RootLayout() {
                 options={{
                     title: "Explore",
                     tabBarLabel: "Explore",
+                    headerStyle: {
+                        backgroundColor: "#1b35a6", 
+                    },
+                    headerTintColor: "#fff", // text color
                     headerTitle: model.currentCity ? `Hey ${currentUserName}, let's explore ${model.currentCity}!` : `Hey ${currentUserName}, let's explore!`,
                     tabBarIcon: function renderExploreTabIconACB() {
                         return <Text>🗺️</Text>;

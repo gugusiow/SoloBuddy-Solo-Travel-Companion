@@ -35,7 +35,7 @@ export default observer(function RootLayout() {
                     title: "Explore",
                     tabBarLabel: "Explore",
                     headerStyle: {
-                        backgroundColor: "#1b35a6", 
+                        backgroundColor: "#1ba65a", 
                     },
                     headerTintColor: "#fff", // text color
                     headerTitle: model.currentCity ? `Hey ${currentUserName}, let's explore ${model.currentCity}!` : `Hey ${currentUserName}, let's explore!`,
@@ -48,6 +48,10 @@ export default observer(function RootLayout() {
                 name="safety"
                 options={{
                     title: "Safety",
+                    headerStyle: {
+                        backgroundColor: "#1b35a6", 
+                    },
+                    headerTintColor: "#fff", // text color
                     tabBarIcon: function renderSafetyTabIconACB() {
                         return <Text>🛡️</Text>;
                     },
@@ -57,6 +61,10 @@ export default observer(function RootLayout() {
                 name="community"
                 options={{
                     title: "Community",
+                    headerStyle: {
+                        backgroundColor: "#d85eba", 
+                    },
+                    headerTintColor: "#fff", // text color
                     tabBarIcon: function renderCommunityTabIconACB() {
                         return <Text>💬</Text>;
                     },
@@ -79,6 +87,10 @@ export default observer(function RootLayout() {
                 name="profile"
                 options={{
                     title: "Profile",
+                    headerStyle: {
+                        backgroundColor: "#1ba66e", 
+                    },
+                    headerTintColor: "#fff", // text color
                     tabBarIcon: function renderProfileTabIconACB() {
                         return <Text>👤</Text>;
                     },

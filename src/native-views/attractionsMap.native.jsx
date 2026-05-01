@@ -20,8 +20,10 @@ export function AttractionsMap({
   attractions,
   onSelectAttraction,
   searchResults,
+  focusedSearchResult,
 }) {
   const mapRef = useRef(null);
+  const searchMarkerRefs = useRef({});
   const [userLocation, setUserLocation] = useState(null);
   const [permissionDenied, setPermissionDenied] = useState(false);
   const [isLoadingLocation, setIsLoadingLocation] = useState(true);
@@ -61,6 +63,24 @@ export function AttractionsMap({
       longitudeDelta: Math.max((maxLng - minLng) * 1.5, 0.05),
     };
   }, [mappableAttractions]);
+
+  // follow docs for animatetoregion reactnativemapsss
+  useEffect(function animateToFocusedResultACB() {
+    if (!focusedSearchResult || !mapRef.current) return;
+    if (!Number.isFinite(focusedSearchResult.latitude) || !Number.isFinite(focusedSearchResult.longitude)) return;
+
+    const key = String(focusedSearchResult.id ?? focusedSearchResult.name);
+    mapRef.current.animateToRegion(
+      {
+        latitude: focusedSearchResult.latitude,
+        longitude: focusedSearchResult.longitude,
+        latitudeDelta: 0.02,
+        longitudeDelta: 0.02,
+      },
+      600
+    );
+    searchMarkerRefs.current[key]?.showCallout();
+  }, [focusedSearchResult]);
 
   // when search results arrive, animate the map to fit them all
   useEffect(function animateToSearchResultsACB() {
@@ -175,9 +195,11 @@ export function AttractionsMap({
         })}
 
         {mappableSearchResults.map(function renderSearchMarkerACB(result) {
+          const key = String(result.id ?? result.name);
           return (
             <Marker
-              key={`search-${String(result.id ?? result.name)}`}
+              key={`search-${key}`}
+              ref={function setMarkerRefACB(ref) { searchMarkerRefs.current[key] = ref; }}
               coordinate={{ latitude: result.latitude, longitude: result.longitude }}
               title={result.name}
               description={result.location || ""}

@@ -23,6 +23,8 @@ export function HomeView(props) {
   const [listWidth, setListWidth] = useState(Dimensions.get("window").width);
   const [attractionModalVisible, setAttractionModalVisible] = useState(false);
   const [mapQuery, setMapQuery] = useState("");
+  const [focusedSearchResult, setFocusedSearchResult] = useState(null);
+  const [showResultsList, setShowResultsList] = useState(true);
 
   const baseAttractions = props.attractions || [];
   const shouldLoop = baseAttractions.length > 1;
@@ -146,6 +148,8 @@ export function HomeView(props) {
 
   function handleMapQueryChangeACB(text) {
     setMapQuery(text);
+    setFocusedSearchResult(null);
+    setShowResultsList(true);
 
     if (searchTimeoutRef.current) {
       clearTimeout(searchTimeoutRef.current);
@@ -217,7 +221,7 @@ export function HomeView(props) {
             )}
           </View>
 
-          {props.mapSearchResults?.length > 0 ? (
+          {props.mapSearchResults?.length > 0 && showResultsList ? (
             <View style={styles.searchResultsContainer}>
               <Text style={styles.searchResultsTitle}>
                 {props.mapSearchResults.length} result{props.mapSearchResults.length !== 1 ? "s" : ""}
@@ -227,7 +231,8 @@ export function HomeView(props) {
                   key={`search-result-${index}-${String(result.id ?? result.name)}`}
                   style={styles.searchResultItem}
                   onPress={function onPressSearchResultACB() {
-                    userWantsToSeeMoreACB(result);
+                    setFocusedSearchResult(result);
+                    setShowResultsList(false);
                   }}
                 >
                   <Text style={styles.searchResultName}>{result.name}</Text>
@@ -245,6 +250,7 @@ export function HomeView(props) {
               currentAttraction={props.currentAttraction}
               onSelectAttraction={userWantsToSeeMoreACB}
               searchResults={props.mapSearchResults || []}
+              focusedSearchResult={focusedSearchResult}
             />
           </View>
         </View>

@@ -69,10 +69,7 @@ class AppModel {
   // TODO: this alert might not be needed? or can change a bit
   updateWeatherAlerts() {
     const weather = this.weatherDetailsPromiseState.data || this.weatherBannerPromiseState.data;
-    const alerts = buildWeatherAlertsACB(weather);
-    this.weatherAlerts = alerts.length > 0
-      ? alerts
-      : [{ event: "No major local incidents reported", description: "No robbery, accident, earthquake, or severe weather alert is currently flagged for your area." }];
+    this.weatherAlerts = buildWeatherAlertsACB(weather);
   }
 
   // --- attractions ---

@@ -10,7 +10,7 @@ import {
 import CommunityPostModal from "./communityPostModal.jsx";
 
 const CATEGORIES = {
-  safety:     { label: "Safety Tip", emoji: "🛡️", color: "#f97316", bg: "#fff7ed" },
+  safety:     { label: "Safety", emoji: "🛡️", color: "#f97316", bg: "#fff7ed" },
   experience: { label: "Experience", emoji: "✈️", color: "#10b981", bg: "#ecfdf5" },
   question:   { label: "Question",   emoji: "❓", color: "#3b82f6", bg: "#eff6ff" },
 };
@@ -95,7 +95,7 @@ function PostCard({ post, currentUid, onLike, onDelete }) {
 
 const FILTER_PILLS = [
   { key: "all", label: "All" },
-  { key: "safety",     label: "🛡️ Safety" },
+  { key: "safety",     label: "🛡️ Safety " }, // need to add a space, coz of some stupid android bug.
   { key: "experience", label: "✈️ Experience" },
   { key: "question",   label: "❓ Question" },
 ];
@@ -280,7 +280,7 @@ const styles = StyleSheet.create({
   filterPillText: {
     fontSize: 13,
     fontWeight: "600",
-    color: "#6b7280",
+    color: "#111827", // made it more contrasting, coz on android u couldnt really see it
   },
   filterPillTextActive: {
     color: "#ffffff",

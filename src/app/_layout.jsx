@@ -60,7 +60,8 @@ export default observer(function RootLayout() {
             <Tabs.Screen
                 name="community"
                 options={{
-                    title: "Community",
+                    title: "Community and Vibes",   // changed the name to remove duplicates
+                    tabBarLabel: "Community",   // made this cleaner in the footer
                     headerStyle: {
                         backgroundColor: "#7D5A50", 
                     },
@@ -73,7 +74,7 @@ export default observer(function RootLayout() {
             <Tabs.Screen
                 name="wishlist"
                 options={{
-                    title: "My Trip",
+                    title: "My Trips",
                     headerStyle: {
                         backgroundColor: "#a61b2e", 
                     },

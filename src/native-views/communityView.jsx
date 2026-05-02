@@ -130,7 +130,7 @@ export default function CommunityView({
         contentContainerStyle={styles.scrollContent}
         showsVerticalScrollIndicator={false}
       >
-        <Text style={styles.heading}>Community & Vibes</Text>
+        {/* <Text style={styles.heading}>Community & Vibes</Text> */}
         <Text style={styles.subheading}>
           Share safety tips and travel experiences with fellow solo travellers.
         </Text>

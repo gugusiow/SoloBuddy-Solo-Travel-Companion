@@ -27,7 +27,7 @@ export default function WishlistView({
   return (
     <View style={styles.outerContainer}>
       <ScrollView contentContainerStyle={styles.container}>
-        <Text style={styles.title}>My Trips</Text>
+        {/* <Text style={styles.title}>My Trips</Text> */}
         {/* tab 0 is wishlist, tab 1 is itinerary */}
         <SegmentedControl
           values={["Wishlist", "Itinerary"]}

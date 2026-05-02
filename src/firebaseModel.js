@@ -1,4 +1,4 @@
-import { initializeApp, getApp, getApps } from "firebase/app";
+import { initializeApp, getApps } from "firebase/app";
 import {
   getAuth,
   onAuthStateChanged,
@@ -30,11 +30,15 @@ import {
 
 import { firebaseConfig } from "/src/firebaseConfig.js";
 
-const app = getApps().length ? getApp() : initializeApp(firebaseConfig);
+// I made some changes here to make it easier for testing when swtiching bnetween rpoject ids. (i had some issues)
+const existingApp = getApps().find(
+  (appInstance) => appInstance.options.projectId === firebaseConfig.projectId
+);
+const app = existingApp ?? initializeApp(firebaseConfig, firebaseConfig.projectId);
 
 // for debug, for some reason on my phone I'm still connected to the prev firebase
-console.log("Firebase Project ID:", app.options.projectId);
-console.log("Firebase API Key:", app.options.apiKey);
+// console.log("Firebase Project ID:", app.options.projectId);
+// console.log("Firebase API Key:", app.options.apiKey);
 
 export const auth = getAuth(app);
 export const db = getFirestore(app);

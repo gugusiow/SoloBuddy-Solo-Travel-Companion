@@ -1,5 +1,5 @@
 const OPENROUTER_API_KEY = process.env.EXPO_PUBLIC_OPENROUTER_API_KEY;
-// if need chnge model
+// if need chnge model; that's sickkkk
 const MODEL = "openai/gpt-oss-120b:free";
 
 export async function generateItineraryACB(items) {

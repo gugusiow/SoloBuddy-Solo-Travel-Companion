@@ -227,9 +227,12 @@ export function HomeView(props) {
                 {props.mapSearchResults.length} result{props.mapSearchResults.length !== 1 ? "s" : ""}
               </Text>
               {props.mapSearchResults.map((result, index) => (
-                <Pressable
+                <View
                   key={`search-result-${index}-${String(result.id ?? result.name)}`}
                   style={styles.searchResultItem}
+                >
+                  <Pressable
+                    style={styles.searchResultInfo}
                   onPress={function onPressSearchResultACB() {
                     setFocusedSearchResult(result);
                     setShowResultsList(false);
@@ -240,6 +243,13 @@ export function HomeView(props) {
                     <Text style={styles.searchResultLocation}>{result.location}</Text>
                   ) : null}
                 </Pressable>
+                  <Pressable
+                    style={({ pressed }) => [styles.searchResultSeeMore, pressed && { opacity: 0.7 }]}
+                    onPress={function onSeeMoreACB() { userWantsToSeeMoreACB(result); }}
+                  >
+                    <Text style={styles.searchResultSeeMoreText}>See More</Text>
+                  </Pressable>
+                </View>
               ))}
             </View>
           ) : null}

@@ -51,11 +51,17 @@ const styles = StyleSheet.create({
     marginBottom: 10,
   },
   searchResultItem: {
-    paddingVertical: 12,
+    flexDirection: "row",
+    alignItems: "center",
+    paddingVertical: 10,
     paddingHorizontal: 10,
     borderRadius: 12,
     backgroundColor: "#f9fafb",
     marginBottom: 10,
+  },
+  searchResultInfo: {
+    flex: 1,
+    paddingVertical: 2,
   },
   searchResultName: {
     fontSize: 15,
@@ -66,6 +72,18 @@ const styles = StyleSheet.create({
     marginTop: 4,
     fontSize: 13,
     color: "#6b7280",
+  },
+  searchResultSeeMore: {
+    marginLeft: 10,
+    backgroundColor: "#111827",
+    borderRadius: 8,
+    paddingVertical: 6,
+    paddingHorizontal: 12,
+  },
+  searchResultSeeMoreText: {
+    color: "#ffffff",
+    fontSize: 12,
+    fontWeight: "700",
   },
   mapSearchIconText: {
     fontSize: 18,

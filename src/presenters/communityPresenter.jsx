@@ -5,7 +5,7 @@ import {
   addCommunityPost,
   toggleLikePost,
   deleteCommunityPost,
-} from "../firebaseModel.js";
+} from "../services/communityService.js";
 import CommunityView from "../native-views/communityView.jsx";
 
 export const CommunityPresenter = observer(function CommunityPresenter({ model }) {

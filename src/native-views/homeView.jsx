@@ -233,16 +233,15 @@ export function HomeView(props) {
                 >
                   <Pressable
                     style={styles.searchResultInfo}
-                  onPress={function onPressSearchResultACB() {
-                    setFocusedSearchResult(result);
-                    setShowResultsList(false);
-                  }}
-                >
-                  <Text style={styles.searchResultName}>{result.name}</Text>
-                  {result.location ? (
-                    <Text style={styles.searchResultLocation}>{result.location}</Text>
-                  ) : null}
-                </Pressable>
+                    onPress={function onPressSearchResultACB() {
+                      setFocusedSearchResult(result);
+                    }}
+                  >
+                    <Text style={styles.searchResultName}>{result.name}</Text>
+                    {result.location ? (
+                      <Text style={styles.searchResultLocation}>{result.location}</Text>
+                    ) : null}
+                  </Pressable>
                   <Pressable
                     style={({ pressed }) => [styles.searchResultSeeMore, pressed && { opacity: 0.7 }]}
                     onPress={function onSeeMoreACB() { userWantsToSeeMoreACB(result); }}

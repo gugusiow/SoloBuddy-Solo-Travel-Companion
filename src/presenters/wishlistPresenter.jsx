@@ -1,7 +1,7 @@
 import React, { useEffect } from "react";
 import { observer } from "mobx-react-lite";
 import WishlistView from "../native-views/wishlistView.jsx";
-import { listenToWishlist, removeWishlistItem, markWishlistItemVisited } from "../firebaseModel.js";
+import { listenToWishlist, removeWishlistItem, markWishlistItemVisited } from "../services/wishlistService.js";
 
 export const WishlistPresenter = observer(function WishlistPresenter({ model }) {
   useEffect(

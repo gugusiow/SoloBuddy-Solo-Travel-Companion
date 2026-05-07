@@ -7,7 +7,8 @@ import { fetchNewsACB } from "./services/newsService.js";
 import { fetchUKAdvisoryACB } from "./services/ukAdvisoryService.js";
 import { fetchUSAdvisoryACB } from "./services/usAdvisoryService.js";
 import { generateItineraryACB } from "./services/openRouterService.js";
-import { signInWithEmail, signUpWithEmail, signOutUser, saveUserProfile, uploadProfilePhoto, setWishlistItem } from "./firebaseModel.js";
+import { signInWithEmail, signUpWithEmail, signOutUser, saveUserProfile, uploadProfilePhoto } from "./firebaseModel.js";
+import { setWishlistItem } from "./services/wishlistService.js";
 
 class AppModel {
   // promise states for async data

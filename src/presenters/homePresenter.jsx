@@ -8,13 +8,6 @@ const HomePresenter = observer(function HomePresenter(props) {
   const model = props.model;
 
   async function getUserLocationACB() {
-    if (
-      model.currentLocation?.latitude != null &&
-      model.currentLocation?.longitude != null
-    ) {
-      return model.currentLocation;
-    }
-
     const permission = await Location.requestForegroundPermissionsAsync();
 
     if (permission.status !== "granted") {

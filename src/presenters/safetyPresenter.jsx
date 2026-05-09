@@ -8,12 +8,6 @@ const SafetyPresenter = observer(function SafetyPresenter(props) {
   const model = props.model;
 
   async function getUserLocationACB() {
-    if (
-      model.currentLocation?.latitude != null &&
-      model.currentLocation?.longitude != null
-    ) {
-      return model.currentLocation;
-    }
 
     const permission = await Location.requestForegroundPermissionsAsync();
 

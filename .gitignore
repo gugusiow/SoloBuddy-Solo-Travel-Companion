@@ -18,6 +18,7 @@ web-build/
 
 ios
 android
+eas.json
 
 # Native
 *.orig.*

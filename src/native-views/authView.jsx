@@ -146,7 +146,7 @@ const lightTokens = {
     buttonBg: "#111827",
     buttonText: "#ffffff",
     link: "#1f58d2",
-    avatarBg: "#4f46e5",
+    avatarBg: "#7d5a50",
     photoBg: "#e5e7eb",
 };
 

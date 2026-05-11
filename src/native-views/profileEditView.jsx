@@ -91,11 +91,11 @@ const styles = StyleSheet.create({
   container: {
     flexGrow: 1,
     padding: 20,
-    backgroundColor: "#f5f7fb",
+    backgroundColor: "#f5e8d3",
     justifyContent: "center",
   },
   card: {
-    backgroundColor: "#fff",
+    backgroundColor: "#d9c5b2",
     borderRadius: 20,
     padding: 20,
   },
@@ -113,7 +113,7 @@ const styles = StyleSheet.create({
     width: 110,
     height: 110,
     borderRadius: 55,
-    backgroundColor: "#4f46e5",
+    backgroundColor: "#7d5a50",
     alignItems: "center",
     justifyContent: "center",
     marginBottom: 12,

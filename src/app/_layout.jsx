@@ -73,8 +73,14 @@ export default observer(function RootLayout() {
                         backgroundColor: "#7D5A50", 
                     },
                     headerTintColor: "#fff", // text color
-                    tabBarIcon: function renderCommunityTabIconACB() {
-                        return <Text>💬</Text>;
+                    tabBarIcon: function renderCommunityTabIconACB({ size }) {
+                        return (
+                        <Image
+                            source={require("../assets/community-icon.png")}
+                            style={{ width: size, height: size }}
+                            resizeMode="contain"
+                        />
+                    );
                     },
                 }}
             />
@@ -86,7 +92,7 @@ export default observer(function RootLayout() {
                         backgroundColor: "#a61b2e", 
                     },
                     headerTintColor: "#fff", // text color
-        tabBarIcon: function rendewishlistTabIconACB({ size }) {
+                    tabBarIcon: function renderWishlistTabIconACB({ size }) {
                         return (
                         <Image
                             source={require("../assets/wishlist-icon.png")}

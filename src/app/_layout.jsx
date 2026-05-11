@@ -58,9 +58,15 @@ export default observer(function RootLayout() {
                     headerStyle: {
                         backgroundColor: "#7D5A50", 
                     },
-                    headerTintColor: "#fff", // text color
-                    tabBarIcon: function renderSafetyTabIconACB() {
-                        return <Text>🛡️</Text>;
+                    headerTintColor: "#fff", // text color        
+                    tabBarIcon: function renderSafetyTabIconACB({ size }) {
+                        return (
+                        <Image
+                            source={require("../assets/safety-icon.png")}
+                            style={{ width: size, height: size }}
+                            resizeMode="contain"
+                        />
+                    );
                     },
                 }}
             />

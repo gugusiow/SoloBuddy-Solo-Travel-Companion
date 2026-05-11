@@ -28,7 +28,12 @@ export function AuthView(props) {
             contentContainerStyle={[styles.container, { backgroundColor: t.bg }]}
             keyboardShouldPersistTaps="handled"
         >
-            <Text style={[styles.title, { color: t.title }]}>Solo Buddy</Text>
+            <Image
+                source={require("../assets/login-logo.png")}
+                style={styles.logo}
+                resizeMode="contain"
+            />
+
             <Text style={[styles.subtitle, { color: t.subtitle }]}>
                 {props.isRegisterMode ? "Create an account" : "Sign in to continue"}
             </Text>
@@ -238,5 +243,11 @@ const styles = StyleSheet.create({
         marginTop: 20,
         textAlign: "center",
         fontSize: 14,
+    },
+      logo: {
+      width: 140,
+      height: 140,
+      alignSelf: "center",
+      marginBottom: 1,
     },
 });

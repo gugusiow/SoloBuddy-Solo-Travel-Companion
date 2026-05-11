@@ -5,6 +5,7 @@ import { useEffect } from "react";
 import { observer } from "mobx-react-lite";
 import { connectToAuth } from "/src/firebaseModel.js";
 import AuthPresenter from "../presenters/authPresenter.jsx";
+import { Image } from "react-native"
 
 export default observer(function RootLayout() {
     // aft app mounts, set up the firebase auth state observer 
@@ -39,8 +40,14 @@ export default observer(function RootLayout() {
                     },
                     headerTintColor: "#fff", // text color
                     headerTitle: model.currentCity ? `Hey ${currentUserName}, let's explore ${model.currentCity}!` : `Hey ${currentUserName}, let's explore!`,
-                    tabBarIcon: function renderExploreTabIconACB() {
-                        return <Text>🗺️</Text>;
+                    tabBarIcon: function renderExploreTabIconACB({ size }) {
+                        return (
+                        <Image
+                            source={require("../assets/explore-icon.png")}
+                            style={{ width: size, height: size }}
+                            resizeMode="contain"
+                        />
+                    );
                     },
                 }}
             />

@@ -131,7 +131,7 @@ export function AuthView(props) {
 }
 
 const lightTokens = {
-    bg: "#ffffff",
+    bg: "#F5E8D3",
     title: "#111827",
     subtitle: "#6b7280",
     text: "#111827",

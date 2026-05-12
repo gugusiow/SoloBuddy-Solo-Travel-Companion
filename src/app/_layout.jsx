@@ -102,6 +102,7 @@ export default observer(function RootLayout() {
                         return (
                         <Image
                             source={require("../assets/wishlist-icon.png")}
+                            // source={require("../assets/explore-icon.png")}
                             style={{ width: size, height: size }}
                             resizeMode="contain"
                         />

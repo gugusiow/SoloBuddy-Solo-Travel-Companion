@@ -1,4 +1,4 @@
-import { View, Text, TextInput, Pressable, StyleSheet, useColorScheme, ScrollView, Image, ActivityIndicator } from "react-native";
+import { View, Text, TextInput, Pressable, StyleSheet, ScrollView, Image, ActivityIndicator } from "react-native";
 
 export function AuthView(props) {
     // for reference for the rest!!
@@ -20,8 +20,8 @@ export function AuthView(props) {
     // props.onSubmit         - called when Login/Register button pressed
     // props.onToggleMode     - called when user wants to switch between login/register
 
-    const dark = useColorScheme() === "dark";
-    const t = dark ? darkTokens : lightTokens;
+    // just keep light theme permanent so it matches the logo hahaha
+    const t = lightTokens;
 
     return (
         <ScrollView

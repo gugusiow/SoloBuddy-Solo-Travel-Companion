@@ -6,6 +6,7 @@ export default {
     version: "1.0.0",
     orientation: "portrait",
     scheme: "project",
+    assetBundlePatterns: ["**/*"],
     userInterfaceStyle: "automatic",
     ios: {
       newArchEnabled: true,

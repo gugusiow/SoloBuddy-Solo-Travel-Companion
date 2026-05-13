@@ -9,6 +9,7 @@ import {
   StyleSheet,
   ActivityIndicator,
 } from "react-native";
+import { shared } from "./sharedStyles.js";
 
 export default function ProfileEditView(props) {
   const { form, saving, uploading, errorText } = props;
@@ -89,9 +90,8 @@ export default function ProfileEditView(props) {
 
 const styles = StyleSheet.create({
   container: {
-    flexGrow: 1,
+    ...shared.screenContent,
     padding: 20,
-    backgroundColor: "#f5e8d3",
     justifyContent: "center",
   },
   card: {

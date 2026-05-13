@@ -8,6 +8,7 @@ import {
   TextInput,
 } from "react-native";
 import CommunityPostModal from "./communityPostModal.jsx";
+import { shared } from "./sharedStyles.js";
 
 const CATEGORIES = {
   safety:     { label: "Safety", emoji: "🛡️", color: "#f97316", bg: "#fff7ed" },
@@ -212,13 +213,9 @@ export default function CommunityView({
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: "#F5E8D3",
-  },
+  ...shared,
   scrollContent: {
-    padding: 16,
-    paddingBottom: 100,
+    ...shared.scrollContent,
     gap: 14,
   },
 

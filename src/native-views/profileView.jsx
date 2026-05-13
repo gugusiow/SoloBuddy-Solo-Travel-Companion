@@ -7,6 +7,7 @@ import {
   Pressable,
   StyleSheet,
 } from "react-native";
+import { shared } from "./sharedStyles.js";
 
 function InfoRow({ label, value }) {
   return (
@@ -56,8 +57,7 @@ export default function ProfileView(props) {
 
 const styles = StyleSheet.create({
   container: {
-    flexGrow: 1,
-    backgroundColor: "#F5E8D3",
+    ...shared.screenContent,
     padding: 20,
     justifyContent: "center",
   },

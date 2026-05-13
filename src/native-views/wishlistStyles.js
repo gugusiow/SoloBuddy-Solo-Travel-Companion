@@ -1,14 +1,9 @@
 import { StyleSheet } from "react-native";
+import { shared } from "./sharedStyles.js";
 
 export const styles = StyleSheet.create({
-  outerContainer: {
-    flex: 1,
-    backgroundColor: "#f5e8d3",
-  },
-  container: {
-    padding: 16,
-    paddingBottom: 100,
-  },
+  outerContainer: shared.container,
+  container: shared.scrollContent,
   title: {
     fontSize: 22,
     fontWeight: "700",

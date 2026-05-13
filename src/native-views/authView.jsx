@@ -154,21 +154,6 @@ const lightTokens = {
     photoBg: "#e5e7eb",
 };
 
-const darkTokens = {
-    bg: "#0f172a",
-    title: "#f1f5f9",
-    subtitle: "#94a3b8",
-    text: "#f1f5f9",
-    placeholder: "#64748b",
-    inputBg: "#1e293b",
-    inputBorder: "#334155",
-    buttonBg: "#f1f5f9",
-    buttonText: "#0f172a",
-    link: "#60a5fa",
-    avatarBg: "#4f46e5",
-    photoBg: "#334155",
-};
-
 const styles = StyleSheet.create({
     container: {
         flexGrow: 1,

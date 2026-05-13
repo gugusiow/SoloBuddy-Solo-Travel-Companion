@@ -19,6 +19,9 @@ export function SafetyView(props) {
 
   const newsItems = props.touristNews || [];
   const weather = props.currentWeather || null;
+
+  // var to check for UK warnings, reused several times
+  const hasUKWarnings = props.travelAdvisory?.alertStatus?.length > 0;
   // add some styling to switch from day to night
   const bannerTextStyle = weather && !weather.isDaytime ? styles.weatherTextNight : null;
 
@@ -175,6 +178,29 @@ export function SafetyView(props) {
     return alert.replace(/_/g, " ").replace(/^\w/, (c) => c.toUpperCase());
   }
 
+  // extracted the advisory card rendering logic into an ACB
+  function renderAdvisoryCardACB({
+    sourceLabel,
+    updatedAt,
+    rightContent,
+    expandedContent,
+  }) {
+    return (
+      <View style={styles.advisoryCard}>
+        <View style={styles.advisoryRow}>
+          <View>
+            <Text style={styles.advisorySource}>{sourceLabel}</Text>
+            <Text style={styles.advisoryDate}>
+              Updated {formatAdvisoryDateACB(updatedAt)}
+            </Text>
+          </View>
+          <View style={styles.advisoryRight}>{rightContent}</View>
+        </View>
+        {expandedContent}
+      </View>
+    );
+  }
+
   return (
     <View style={{ flex: 1 }}>
       <ScrollView
@@ -223,49 +249,39 @@ export function SafetyView(props) {
         {/* if the api call fails, which might happen cos expo's geocode return different name from what the API req, then blank.
         TODO: Might fix this in the future if got time, but for now it works for *most* countries */}        
         {props.usAdvisory ? (
-          <View style={styles.advisoryCard}>
-            <View style={styles.advisoryRow}>
-              <View>
-                <Text style={styles.advisorySource}>US State Dept</Text>
-                <Text style={styles.advisoryDate}>
-                  Updated {formatAdvisoryDateACB(props.usAdvisory.updatedAt)}
-                </Text>
-              </View>
-              <View style={styles.advisoryRight}>
+          renderAdvisoryCardACB({
+            sourceLabel: "US State Dept",
+            updatedAt: props.usAdvisory.updatedAt,
+            rightContent: (
+              <>
                 <View style={[styles.advisoryBadge, getUSLevelBadgeStyleACB(props.usAdvisory.level)]}>
                   <Text style={styles.advisoryBadgeText}>
                     {props.usAdvisory.level ? `Lvl ${props.usAdvisory.level}` : "--"}
                   </Text>
                 </View>
                 <Pressable
-                  onPress={function openUSAdvisoryACB() { openURL(props.usAdvisory.webUrl); }}
+                  onPress={function openUSAdvisoryACB() { openExternalLinkACB(props.usAdvisory.webUrl); }}
                   style={styles.advisoryIconBtn}
                 >
                   <Text style={styles.advisoryIconText}>↗</Text>
                 </Pressable>
-              </View>
-            </View>
-          </View>
+              </>
+            ),
+          })
         ) : null}
 
         {props.travelAdvisory ? (
-          <View style={styles.advisoryCard}>
-            <View style={styles.advisoryRow}>
-              <View>
-                <Text style={styles.advisorySource}>UK Travel Advice (FCDO)</Text>
-                <Text style={styles.advisoryDate}>
-                  Updated {formatAdvisoryDateACB(props.travelAdvisory.updatedAt)}
-                </Text>
-              </View>
-              <View style={styles.advisoryRight}>
+          renderAdvisoryCardACB({
+            sourceLabel: "UK Travel Advice (FCDO)",
+            updatedAt: props.travelAdvisory.updatedAt,
+            rightContent: (
+              <>
                 <View style={[
                   styles.advisoryBadge,
-                  props.travelAdvisory.alertStatus.length > 0
-                    ? styles.advisoryBadgeUKRed
-                    : styles.advisoryBadgeUKGreen,
+                  hasUKWarnings ? styles.advisoryBadgeUKRed : styles.advisoryBadgeUKGreen,
                 ]}>
                   <Text style={styles.advisoryBadgeText}>
-                    {props.travelAdvisory.alertStatus.length > 0 ? "Warning Issued" : "No Warnings"}
+                    {hasUKWarnings ? "Warning Issued" : "No Warnings"}
                   </Text>
                 </View>
                 {/* will only show if there is warning  */}
@@ -275,7 +291,7 @@ export function SafetyView(props) {
                 >
                   <Text style={styles.advisoryIconText}>↗</Text>
                 </Pressable>
-                {props.travelAdvisory.alertStatus.length > 0 && (
+                {hasUKWarnings && (
                   <Pressable
                     onPress={function toggleAdvisoryACB() { setAdvisoryExpanded(!advisoryExpanded); }}
                     style={styles.advisoryIconBtn}
@@ -283,9 +299,9 @@ export function SafetyView(props) {
                     <Text style={styles.advisoryIconText}>{advisoryExpanded ? "↑" : "↓"}</Text>
                   </Pressable>
                 )}
-              </View>
-            </View>
-            {advisoryExpanded && props.travelAdvisory.alertStatus.length > 0 && (
+              </>
+            ),
+            expandedContent: advisoryExpanded && hasUKWarnings ? (
               <View style={styles.advisoryExpandedContent}>
                 {props.travelAdvisory.alertStatus.map(function renderAlertItemACB(alert, i) {
                   return (
@@ -295,8 +311,8 @@ export function SafetyView(props) {
                   );
                 })}
               </View>
-            )}
-          </View>
+            ) : null,
+          })
         ) : null}
 
         <Text style={styles.advisoryDisclaimer}>

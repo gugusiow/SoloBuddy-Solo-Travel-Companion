@@ -146,14 +146,20 @@ export function HomeView(props) {
     return `${item.id ?? "item"}-${index}`;
   }
 
+  // added a new ACB for timeout clearing because it's reused several times in different ACBs anyway
+  function clearSearchTimeoutACB() {
+    if (searchTimeoutRef.current) {
+      clearTimeout(searchTimeoutRef.current);
+      searchTimeoutRef.current = null;
+    }
+  }
+
   function handleMapQueryChangeACB(text) {
     setMapQuery(text);
     setFocusedSearchResult(null);
     setShowResultsList(true);
 
-    if (searchTimeoutRef.current) {
-      clearTimeout(searchTimeoutRef.current);
-    }
+    clearSearchTimeoutACB();
 
     if (!text.trim()) {
       props.onClearSearch?.();
@@ -166,27 +172,19 @@ export function HomeView(props) {
   }
 
   function handleMapSearchSubmitACB() {
-    if (searchTimeoutRef.current) {
-      clearTimeout(searchTimeoutRef.current);
-      searchTimeoutRef.current = null;
-    }
+    clearSearchTimeoutACB();
     if (mapQuery.trim()) props.onSearchPlaces?.(mapQuery);
   }
 
   function handleMapClearACB() {
-    if (searchTimeoutRef.current) {
-      clearTimeout(searchTimeoutRef.current);
-      searchTimeoutRef.current = null;
-    }
+    clearSearchTimeoutACB();
     setMapQuery("");
     props.onClearSearch?.();
   }
 
   useEffect(function cleanupSearchTimerACB() {
     return function cleanupACB() {
-      if (searchTimeoutRef.current) {
-        clearTimeout(searchTimeoutRef.current);
-      }
+      clearSearchTimeoutACB();
     };
   }, []);
 

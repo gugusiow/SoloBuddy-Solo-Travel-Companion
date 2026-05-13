@@ -221,11 +221,9 @@ const styles = StyleSheet.create({
     paddingBottom: 100,
     gap: 14,
   },
-  heading: {
-    fontSize: 24,
-    fontWeight: "800",
-    color: "#111827",
-  },
+
+  // removed this heading style cos it wasn't being used anymore
+  
   subheading: {
     fontSize: 14,
     color: "#6b7280",
@@ -285,21 +283,8 @@ const styles = StyleSheet.create({
   filterPillTextActive: {
     color: "#ffffff",
   },
-  categoryBadge: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: 3,
-    paddingHorizontal: 8,
-    paddingVertical: 3,
-    borderRadius: 20,
-  },
-  categoryBadgeEmoji: {
-    fontSize: 11,
-  },
-  categoryBadgeLabel: {
-    fontSize: 11,
-    fontWeight: "700",
-  },
+  
+  // i removed this categoryBadge styling because it's a duplicate
 
   // post card
   card: {

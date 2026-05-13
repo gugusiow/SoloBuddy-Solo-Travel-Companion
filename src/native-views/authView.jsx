@@ -22,6 +22,20 @@ export function AuthView(props) {
 
     // just keep light theme permanent so it matches the logo hahaha
     const t = lightTokens;
+    const isRegisterMode = props.isRegisterMode;
+    
+    // extracted the input styling out so it's easier to reuse
+    const inputStyle = [
+        styles.input,
+        { borderColor: t.inputBorder, backgroundColor: t.inputBg, color: t.text },
+    ];
+    const renderInput = (inputProps) => (
+        <TextInput
+            style={inputStyle}
+            placeholderTextColor={t.placeholder}
+            {...inputProps}
+        />
+    );
 
     return (
         <ScrollView
@@ -35,11 +49,11 @@ export function AuthView(props) {
             />
 
             <Text style={[styles.subtitle, { color: t.subtitle }]}>
-                {props.isRegisterMode ? "Create an account" : "Sign in to continue"}
+                {isRegisterMode ? "Create an account" : "Sign in to continue"}
             </Text>
 
             {/* avatar picker for register only */}
-            {props.isRegisterMode ? (
+            {isRegisterMode ? (
                 <View style={styles.avatarSection}>
                     {props.avatarUri ? (
                         <Image source={{ uri: props.avatarUri }} style={styles.avatarImage} />
@@ -62,54 +76,44 @@ export function AuthView(props) {
             ) : null}
 
             {/* name for register only */}
-            {props.isRegisterMode ? (
-                <TextInput
-                    style={[styles.input, { borderColor: t.inputBorder, backgroundColor: t.inputBg, color: t.text }]}
-                    placeholder="Full name"
-                    placeholderTextColor={t.placeholder}
-                    value={props.name}
-                    onChangeText={props.onNameChange}
-                    autoCapitalize="words"
-                />
+            {isRegisterMode ? (
+                renderInput({
+                    placeholder: "Full name",
+                    value: props.name,
+                    onChangeText: props.onNameChange,
+                    autoCapitalize: "words",
+                })
             ) : null}
 
-            <TextInput
-                style={[styles.input, { borderColor: t.inputBorder, backgroundColor: t.inputBg, color: t.text }]}
-                placeholder="Email"
-                placeholderTextColor={t.placeholder}
-                value={props.email}
-                onChangeText={props.onEmailChange}
-                keyboardType="email-address"
-                autoCapitalize="none"
-            />
+            {renderInput({
+                placeholder: "Email",
+                value: props.email,
+                onChangeText: props.onEmailChange,
+                keyboardType: "email-address",
+                autoCapitalize: "none",
+            })}
 
-            <TextInput
-                style={[styles.input, { borderColor: t.inputBorder, backgroundColor: t.inputBg, color: t.text }]}
-                placeholder="Password"
-                placeholderTextColor={t.placeholder}
-                value={props.password}
-                onChangeText={props.onPasswordChange}
-                secureTextEntry
-            />
+            {renderInput({
+                placeholder: "Password",
+                value: props.password,
+                onChangeText: props.onPasswordChange,
+                secureTextEntry: true,
+            })}
 
             {/* birthday + phone for register only */}
-            {props.isRegisterMode ? (
+            {isRegisterMode ? (
                 <>
-                    <TextInput
-                        style={[styles.input, { borderColor: t.inputBorder, backgroundColor: t.inputBg, color: t.text }]}
-                        placeholder="Birthday (YYYY-MM-DD)"
-                        placeholderTextColor={t.placeholder}
-                        value={props.birthday}
-                        onChangeText={props.onBirthdayChange}
-                    />
-                    <TextInput
-                        style={[styles.input, { borderColor: t.inputBorder, backgroundColor: t.inputBg, color: t.text }]}
-                        placeholder="Phone (optional)"
-                        placeholderTextColor={t.placeholder}
-                        value={props.phone}
-                        onChangeText={props.onPhoneChange}
-                        keyboardType="phone-pad"
-                    />
+                    {renderInput({
+                        placeholder: "Birthday (YYYY-MM-DD)",
+                        value: props.birthday,
+                        onChangeText: props.onBirthdayChange,
+                    })}
+                    {renderInput({
+                        placeholder: "Phone (optional)",
+                        value: props.phone,
+                        onChangeText: props.onPhoneChange,
+                        keyboardType: "phone-pad",
+                    })}
                 </>
             ) : null}
 
@@ -122,12 +126,12 @@ export function AuthView(props) {
                 onPress={props.onSubmit}
             >
                 <Text style={[styles.buttonText, { color: t.buttonText }]}>
-                    {props.isRegisterMode ? "Register" : "Login"}
+                    {isRegisterMode ? "Register" : "Login"}
                 </Text>
             </Pressable>
 
             <Text style={[styles.toggle, { color: t.link }]} onPress={props.onToggleMode}>
-                {props.isRegisterMode
+                {isRegisterMode
                     ? "Already have an account? Sign in"
                     : "No account yet? Register"}
             </Text>

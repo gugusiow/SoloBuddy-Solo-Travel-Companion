@@ -1,6 +1,6 @@
 # Travel Safety Companion
 
-A mobile app for exploring attractions and staying safe while travelling.
+SoloBuddy is a Travel Safety Companion App targeted at solo-travellers. The main use of the app is to alert the user of potential dangers in the area they are travelling in/intend to travel to. Important data like safety/crime-levels, rampant pickpocketing, or even natural disasters will be provided to users, along with tips for a safe solo travel experience.
 
 ---
 

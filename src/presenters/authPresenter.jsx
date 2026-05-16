@@ -95,8 +95,8 @@ const AuthPresenter = observer(function AuthPresenter(props) {
             onEmailChange={setEmail}
             onPasswordChange={setPassword}
             onNameChange={setName}
-            onBirthdayChange={setBirthday}
-            onPhoneChange={setPhone}
+            onBirthdayChange={(val) => setBirthday((val || "").replace(/[^\d-]/g, ""))}
+            onPhoneChange={(val) => setPhone((val || "").replace(/\D/g, ""))}
             onChoosePhoto={userChosePhotoACB}
             onSubmit={userSubmittedFormACB}
             onToggleMode={userToggledModeACB}

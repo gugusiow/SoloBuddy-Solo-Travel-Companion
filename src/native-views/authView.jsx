@@ -107,6 +107,7 @@ export function AuthView(props) {
                         placeholder: "Birthday (YYYY-MM-DD)",
                         value: props.birthday,
                         onChangeText: props.onBirthdayChange,
+                        keyboardType: "numbers-and-punctuation",
                     })}
                     {renderInput({
                         placeholder: "Phone (optional)",

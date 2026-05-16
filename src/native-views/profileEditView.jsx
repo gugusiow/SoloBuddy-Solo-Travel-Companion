@@ -40,6 +40,7 @@ export default function ProfileEditView(props) {
           value={form.name}
           onChangeText={(text) => props.onChangeField("name", text)}
           placeholder="Your name"
+          maxLength={30}
           style={styles.input}
         />
 

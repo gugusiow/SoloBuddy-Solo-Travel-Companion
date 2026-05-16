@@ -44,6 +44,12 @@ export default observer(function ProfilePresenter() {
   }
 
   function updateFieldACB(field, value) {
+    // set name character limit to avoid overflow
+    if (field === "name") {
+      const capped = (value || "").slice(0, 30);
+      setForm((prev) => ({ ...prev, name: capped }));
+      return;
+    }
     setForm((prev) => ({ ...prev, [field]: value }));
   }
 

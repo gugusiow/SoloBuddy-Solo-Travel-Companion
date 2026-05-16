@@ -71,6 +71,21 @@ NOTE: this will be fixed after mid proj review... for now do Step 3 for AppleMap
 - [Expo Router](https://expo.github.io/router/) — file-based navigation
 - [MobX](https://mobx.js.org/) — reactive state management
 
+## External APIs
+
+| API | Purpose |
+|-----|---------|
+| [Google Places API (New)](https://developers.google.com/maps/documentation/places/web-service) | Nearby attractions, text search, place details |
+| [Google Weather API](https://developers.google.com/maps/documentation/weather) | Current conditions, 7-day forecast, UV index |
+| [Google Air Quality API](https://developers.google.com/maps/documentation/air-quality) | Real-time Air Quality Index (AQI) |
+| [UK Foreign Travel Advisory](https://www.gov.uk/foreign-travel-advice) | Official UK government travel safety alerts |
+| [US State Dept. Travel Advisory](https://travel.state.gov/) | US travel safety level (1–4) by country |
+| [NewsAPI](https://newsapi.org/) | Recent news articles for the destination |
+| [OpenRouter](https://openrouter.ai/) | AI-generated day-by-day travel itinerary |
+| [Firebase Auth](https://firebase.google.com/docs/auth) | User authentication |
+| [Firebase Firestore](https://firebase.google.com/docs/firestore) | User profiles, wishlist, community posts (real-time) |
+| [Firebase Storage](https://firebase.google.com/docs/storage) | Profile photo upload and hosting |
+
 ## Key Architectural Patterns & Code Highlights
 
 ### 1. resolvePromise: Elegant Async State Handling

@@ -50,6 +50,21 @@ export default observer(function ProfilePresenter() {
       setForm((prev) => ({ ...prev, name: capped }));
       return;
     }
+
+    // only allow digits and dashes only, limit to 10 chars (YYYY-MM-DD)
+    if (field === "birthday") {
+      const sanitized = (value || "").replace(/[^\d-]/g, "").slice(0, 10);
+      setForm((prev) => ({ ...prev, birthday: sanitized }));
+      return;
+    }
+
+    // only allow digits and leading plus, strip other chars, cap length
+    if (field === "phone") {
+      const sanitized = (value || "").replace(/[^\d+]/g, "").slice(0, 20);
+      setForm((prev) => ({ ...prev, phone: sanitized }));
+      return;
+    }
+
     setForm((prev) => ({ ...prev, [field]: value }));
   }
 
@@ -101,11 +116,27 @@ export default observer(function ProfilePresenter() {
       setSaving(true);
       setErrorText("");
 
+      // validate birthday format if provided
+      const b = (form.birthday || "").trim();
+      if (b && !/^\d{4}-\d{2}-\d{2}$/.test(b)) {
+        setErrorText("Birthday must be in YYYY-MM-DD format.");
+        setSaving(false);
+        return;
+      }
+
+      // validate phone contains only digits with optional leading +
+      const p = (form.phone || "").trim();
+      if (p && !/^\+?\d+$/.test(p)) {
+        setErrorText("Phone must contain only digits and an optional leading +.");
+        setSaving(false);
+        return;
+      }
+
       await model.saveProfile(user.uid, {
         name: form.name.trim(),
         email: form.email.trim(),
-        birthday: form.birthday.trim(),
-        phone: form.phone.trim(),
+        birthday: b,
+        phone: p,
         avatarUrl: form.avatarUrl || "",
       });
 

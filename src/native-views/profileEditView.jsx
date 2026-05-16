@@ -59,6 +59,8 @@ export default function ProfileEditView(props) {
           value={form.birthday}
           onChangeText={(text) => props.onChangeField("birthday", text)}
           placeholder="YYYY-MM-DD"
+          keyboardType="numbers-and-punctuation"
+          maxLength={10}
           style={styles.input}
         />
 

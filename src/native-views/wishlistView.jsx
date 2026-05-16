@@ -24,6 +24,15 @@ export default function WishlistView({
   // i keep it 5 to make it usable. Myabe can explore to asking it to "recommend?"
   const placesNeeded = Math.max(0, 5 - activeCount);
 
+  // there was an issue where the location name wasn't loading onthe wishlist page, added this helper fuunction to get it
+  function getLocationText(attraction) {
+    if (!attraction) return "";
+    if (typeof attraction.location === "string" && attraction.location.trim()) return attraction.location.trim();
+    if (typeof attraction.formattedAddress === "string" && attraction.formattedAddress.trim()) return attraction.formattedAddress.trim();
+    if (attraction.formattedAddress?.text) return String(attraction.formattedAddress.text).trim();
+    return "";
+  }
+
   return (
     <View style={styles.outerContainer}>
       <ScrollView contentContainerStyle={styles.container}>
@@ -52,7 +61,7 @@ export default function WishlistView({
                     ) : null}
                     <View style={{ flex: 1 }}>
                       <Text style={styles.cardTitle}>{it.name || it.title || "Untitled"}</Text>
-                      {it.location ? <Text style={styles.location}>{it.location}</Text> : null}
+                      {getLocationText(it) ? <Text style={styles.location}>{getLocationText(it)}</Text> : null}
                       {it.description ? <Text style={styles.cardSubtitle}>{it.description}</Text> : null}
                     </View>
                   </View>
@@ -86,8 +95,8 @@ export default function WishlistView({
                       <Text style={[styles.cardTitle, { color: "#6b7280" }]}>
                         {it.name || it.title || "Untitled"}
                       </Text>
-                      {it.location ? (
-                        <Text style={[styles.location, { color: "#9ca3af" }]}>{it.location}</Text>
+                      {getLocationText(it) ? (
+                        <Text style={[styles.location, { color: "#9ca3af" }]}>{getLocationText(it)}</Text>
                       ) : null}
                       <Pressable
                         style={styles.undoButton}

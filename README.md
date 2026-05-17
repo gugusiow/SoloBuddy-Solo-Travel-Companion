@@ -34,15 +34,15 @@ Once running, press `?` to see all options, then:
 
 | Key | Action |
 |-----|--------|
-| `s` | Switch to Expo Go / Development Buiild |
+| `s` | Switch to Expo Go / Development Build |
 | `w` | Open in web browser |
 | `a` | Open in Android emulator |
 | `i` | Open in iOS simulator (macOS only) |
 
 First, press `s` to ensure the dev server is using **Expo Go**. Then:
 
-- **Android:** Open Android Studio and launch your preferred device emulator from the Device Manager, then press `a` in the terminal.
-- **iOS:** Press `i` in the terminal to open the iOS simulator.
+- **Android:** Open Android Studio and launch your preferred device emulator from the Device Manager, then press `a` in the terminal. (Tested with Pixel 10 Pro in Studio) 
+- **iOS:** Press `i` in the terminal to open the iOS simulator. (Mac only) 
 - **Physical phone:** Open the **Expo Go** app and scan the QR code shown in the terminal (iOS: use the Camera app; Android: use the "Scan QR code" option inside Expo Go).
 
 > **Note:** If the terminal prompts `It is recommended to log in with your Expo account before proceeding`, just select **Proceed anonymously**.
@@ -107,7 +107,12 @@ const HomePresenter = observer(function HomePresenter(props) {
   // Reading model.attractionsPromiseState.data here establishes an automatic 
   // reactive dependency. The component re-renders instantly when data updates.
   return (
-    <HomeView ... // []} attractions="{model.attractionsPromiseState.data" ||/>
+    <HomeView
+      attractions={model.attractionsPromiseState.data || []}
+      currentAttraction={model.currentAttraction}
+      onSelectAttraction={userWantsToSelectAttractionACB}
+      /* ...other props */
+    />
   );
 });
 

@@ -2,6 +2,12 @@
 
 SoloBuddy is a travel companion app built for solo travellers. It combines destination exploration (nearby attractions, maps, search), suggested itinerary creation, a community feed and a dedicated Safety tab surfacing official travel advisories, local news and real time local weather. Save places to your trip wishlist, track what you have visited, and head somewhere new with confidence.
 
+## Try the App (Android)
+
+Download the latest Android APK from our Expo build page:
+
+📱 [Download APK (Android)](https://expo.dev/accounts/tsiow/projects/solobuddy/builds/ae6893a0-2254-45e9-999b-ab75d69bb4a7)
+
 ## Prerequisites
 
 - [Node.js](https://nodejs.org/) v18+

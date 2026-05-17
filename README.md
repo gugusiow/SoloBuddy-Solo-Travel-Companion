@@ -43,6 +43,9 @@ First, press `s` to ensure the dev server is using **Expo Go**. Then:
 
 - **Android:** Open Android Studio and launch your preferred device emulator from the Device Manager, then press `a` in the terminal.
 - **iOS:** Press `i` in the terminal to open the iOS simulator.
+- **Physical phone:** Open the **Expo Go** app and scan the QR code shown in the terminal (iOS: use the Camera app; Android: use the "Scan QR code" option inside Expo Go).
+
+> **Note:** If the terminal prompts `It is recommended to log in with your Expo account before proceeding`, just select **Proceed anonymously**.
 
 ## Tech Stack
 

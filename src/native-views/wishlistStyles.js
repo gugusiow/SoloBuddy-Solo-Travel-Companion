@@ -28,6 +28,7 @@ export const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: "600",
     marginBottom: 6,
+    color: "#111827",
   },
   cardSubtitle: {
     fontSize: 14,

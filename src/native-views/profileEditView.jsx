@@ -153,6 +153,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 14,
     paddingVertical: 12,
     fontSize: 16,
+    color: "#111827",
   },
   errorText: {
     color: "#dc2626",

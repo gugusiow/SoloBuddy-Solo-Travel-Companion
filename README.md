@@ -34,42 +34,22 @@ Once running, press `?` to see all options, then:
 
 | Key | Action |
 |-----|--------|
+| `s` | Switch to Expo Go / Development Buiild |
 | `w` | Open in web browser |
 | `a` | Open in Android emulator |
 | `i` | Open in iOS simulator (macOS only) |
-| `s` | Scan QR code with Expo Go on your phone |
 
-NOTE: this will be fixed after mid proj review... for now do Step 3 for AppleMaps in IOS. 
+First, press `s` to ensure the dev server is using **Expo Go**. Then:
 
-4. **Run a dev build (required for maps on Android)**
+- **Android:** Open Android Studio and launch your preferred device emulator from the Device Manager, then press `a` in the terminal.
+- **iOS:** Press `i` in the terminal to open the iOS simulator.
 
-   The `android/` and `ios/` folders are gitignored. You need to regenerate them first:
+## Tech Stack
 
-   ```bash
-   npx expo prebuild
-   ```
-
-   Then create `android/local.properties` with Gmaps API key and add the Android SDK path if it is not added automatically. (can c&p API key from given .env file)
-
-   ```
-   GOOGLE_MAPS_API_KEY=your_google_api_key_here
-   ```
-
-   Then run:
-
-   ```bash
-   # Android (requires Android Studio + emulator)
-   npx expo run:android
-
-   # iOS (requires Xcode)
-   npx expo run:ios
-   ```
-
-## Tech Stack (for now, add ltr)
-
-- [React Native](https://reactnative.dev/) + [Expo SDK 55](https://expo.dev/)
+- [React Native](https://reactnative.dev/) + [Expo SDK 54](https://expo.dev/)
 - [Expo Router](https://expo.github.io/router/) — file-based navigation
 - [MobX](https://mobx.js.org/) — reactive state management
+- [react-native-maps](https://github.com/react-native-maps/react-native-maps) — native map rendering on iOS & Android (IOS: Apple Maps, Android: Google Maps)
 
 ## External APIs
 

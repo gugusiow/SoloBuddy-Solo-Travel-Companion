@@ -29,8 +29,7 @@ Download the latest Android APK from our Expo build page:
 1. **Clone the repository**
 
    ```bash
-   git clone https://gits-15.sys.kth.se/iprog-students/rameesha-siow-wslo-yyche-vt26-project
-   cd rameesha-siow-wslo-yyche-vt26-project
+   git clone https://github.com/gugusiow/SoloBuddy-Solo-Travel-Companion.git
    ```
 
 2. **Install dependencies**
